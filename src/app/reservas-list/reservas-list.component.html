@@ -1,0 +1,21 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let reserva of reservasContent;
+    ">
+      <td>{{ reserva.id }}</td>
+      <td>{{ reserva.motivoReserva }}</td>
+      <td>
+        <button class="btn btn-danger" (click)="removeReserva(reserva.id)">
+          Remove
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>

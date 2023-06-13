@@ -1,32 +1,6 @@
 <div class="d-flex flex-column h-100">
   <app-header></app-header>
-  <div class="d-flex flex-column flex-grow-1 mt-4 table-container">
-    <h3 class="mb-3">Add a name to the list</h3>
-    <div class="d-flex align-items-center mb-3">
-      <div class="flex-grow-1">
-        <input type="text" class="form-control" [(ngModel)]="name" />
-      </div>
-      <button class="btn btn-primary ml-3" (click)="addName(name)">Add name</button>
-    </div>
-    <h2 class="mb-3">Names</h2>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let usuario of usuarios">
-          <td>{{ usuario.id }}</td>
-          <td>{{ usuario.name }}</td>
-          <td>
-            <button class="btn btn-danger" (click)="removeName(usuario.id)">Remove</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <router-outlet></router-outlet>
   <app-footer></app-footer>
 </div>
+
