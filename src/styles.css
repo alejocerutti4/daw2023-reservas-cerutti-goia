@@ -1,2 +1,3 @@
 /* bootstrap */
 @import "~bootstrap/dist/css/bootstrap.css";
+body, html {height:100%; margin:0; padding: 0;}

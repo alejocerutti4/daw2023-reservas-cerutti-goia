@@ -1,16 +1,27 @@
-<table class="table table-striped">
+
+<table class="table table-striped w-100 table-container">
   <thead>
     <tr>
-      <th>ID</th>
-      <th>Name</th>
+      <th>Solicitante</th>
+      <th>Espacio</th>
+      <th>Motivo Reserva</th>
+      <th>Fecha</th>
+      <th>Horario</th>
+      <th>Cantidad Personas</th>
+      <th>Estado</th>
       <th>Actions</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let reserva of reservasContent;
     ">
-      <td>{{ reserva.id }}</td>
+      <td>{{ reserva.solicitante.nombre }} {{ reserva.solicitante.apellido }}</td>
+      <td>{{ reserva.espacioFisico.nombre }}</td>
       <td>{{ reserva.motivoReserva }}</td>
+      <td>{{ reserva.fechaHoraInicioReserva | date: 'dd/MM/yyyy' }}</td>
+      <td>{{ reserva.fechaHoraInicioReserva | date: 'HH:mm' }} - {{ reserva.fechaHoraFinReserva | date: 'HH:mm' }}</td>
+      <td>{{ reserva.cantidadPersonas }}</td>
+      <td><span [style.color]="reserva.estado.color">{{ reserva.estado.nombre }}</span></td>
       <td>
         <button class="btn btn-danger" (click)="removeReserva(reserva.id)">
           Remove
@@ -18,4 +29,9 @@
       </td>
     </tr>
   </tbody>
+
 </table>
+
+
+
+

@@ -1,0 +1,47 @@
+.sidebar-container {
+  display: flex;
+  height: 100%;
+  overflow: hidden; /* Prevent content from overflowing when sidebar expands */
+}
+
+.sidebar {
+  position: absolute;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100%;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.sidebar.collapsed {
+  left: 0;
+}
+
+.sidebar:hover {
+  left: 0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+}
+
+.sidebar.collapsed:hover {
+  z-index: 1;
+}
+
+.icon-placeholder {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-color: #000;
+  margin-right: 8px;
+}
+
+.sidebar .bi {
+  color: black;
+  font-weight: bold;
+}
+
+.sidebar span {
+  color: black;
+}

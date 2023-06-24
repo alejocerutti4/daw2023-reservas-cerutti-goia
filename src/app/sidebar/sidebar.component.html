@@ -1,0 +1,35 @@
+<div class="sidebar-container">
+  <div class="sidebar" [ngClass]="{ 'collapsed': sidebarCollapsed }" (mouseenter)="expandSidebar()" (mouseleave)="collapseSidebar()">
+    <div class="d-flex flex-column flex-shrink-0 p-3 bg-light h-100" [style.width.px]="sidebarWidth">
+      <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+          <a [routerLink]="'/reservas'" routerLinkActive="active" class="nav-link icon-style">
+            <i class="bi bi-house me-2" width="28" height="28"></i>
+            <span *ngIf="!sidebarCollapsed">Home</span>
+          </a>
+        </li>
+        <br />
+        <li class="nav-item">
+          <a [routerLink]="'/dashboard'" routerLinkActive="active" class="nav-link icon-style">
+            <i class="bi bi-speedometer2 me-2" width="28" height="28"></i>
+            <span *ngIf="!sidebarCollapsed">Dashboard</span>
+          </a>
+        </li>
+        <br />
+        <li class="nav-item">
+          <a [routerLink]="'/calendar'" routerLinkActive="active" class="nav-link icon-style">
+            <i class="bi bi-calendar3 me-2" width="28" height="28"></i>
+            <span *ngIf="!sidebarCollapsed">Calendar</span>
+          </a>
+        </li>
+        <br />
+        <li class="nav-item">
+          <a [routerLink]="'/users'" routerLinkActive="active" class="nav-link icon-style">
+            <i class="bi bi-people me-2" width="28" height="28"></i>
+            <span *ngIf="!sidebarCollapsed">Users</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

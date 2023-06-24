@@ -1,0 +1,17 @@
+.table-container {
+  margin-left: 100px;
+}
+
+.custom-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+}
+
+.cdk-overlay-container {
+  z-index: 10000 !important;
+  position: absolute;
+}
+
