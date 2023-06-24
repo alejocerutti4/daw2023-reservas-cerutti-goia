@@ -31,9 +31,6 @@ export class ReservaListComponent implements OnInit, OnDestroy {
 
     this.stateService.shouldOpenModalReserva$.subscribe((shouldOpen: boolean) => {
       this.shouldOpenModalReserva = shouldOpen;
-      if (shouldOpen) {
-        //logic to open the modal
-      }
     });
 
   }
@@ -52,4 +49,9 @@ export class ReservaListComponent implements OnInit, OnDestroy {
       this.reservasContent = reservas.content;
     });
   }
+
+  onClose(){
+    this.stateService.setShouldOpenModalReserva(false);
+  }
+
 }
