@@ -9,6 +9,7 @@ export class StateService {
   private buttonContentSubject: BehaviorSubject<string> = new BehaviorSubject<string>('');
   private shouldOpenModalReservaSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
+
   public title$ = this.titleSubject.asObservable();
   public buttonContent$ = this.buttonContentSubject.asObservable();
   public shouldOpenModalReserva$ = this.shouldOpenModalReservaSubject.asObservable();
