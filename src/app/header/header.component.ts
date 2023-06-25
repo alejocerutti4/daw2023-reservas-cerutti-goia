@@ -14,31 +14,21 @@ export class HeaderComponent {
   constructor(private stateService: StateService) { }
 
   ngOnInit(): void {
-    this.suscribeToTitle();
-    this.suscribeToButtonContent();
-    this.suscribeToOpenModal();
+    this.suscribeToState();
   }
 
   openModalReserva() {
     this.openModal();
   }
 
-  suscribeToTitle() {
-    this.stateService.getTitle().subscribe((title: string) => {
-      this.title = title;
-    });
-  }
+  suscribeToState() {
+    this.stateService.getHeaderStateSubject().subscribe((state: any) => {
+      this.title = state.title;
+      this.buttonContent = state.buttonContent;
+      this.openModal = state.openModal;
+    }
+  );
+}
 
-  suscribeToButtonContent() {
-    this.stateService.getButtonContent().subscribe((content: string) => {
-      this.buttonContent = content;
-    });
-  }
-
-  suscribeToOpenModal() {
-    this.stateService.getOpenModal().subscribe((fn: Function) => {
-      this.openModal = fn;
-    });
-  }
 
 }

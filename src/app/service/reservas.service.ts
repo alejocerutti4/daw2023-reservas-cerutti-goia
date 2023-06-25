@@ -1,57 +1,67 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subject, catchError, map, of } from 'rxjs';
+import { Observable, of, catchError, map } from 'rxjs';
+import { StateService } from './state.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ReservasService {
-  private reservasData: any;
-  private reservasChanged = new Subject<any[]>();
   private apiBaseUrl = 'http://localhost:8080/';
 
-  constructor(private http: HttpClient) {}
-
+  constructor(private http: HttpClient, private stateService: StateService) {}
 
   getReservas(): Observable<any[]> {
-
-      return this.fetchReservasData().pipe(
-        map((data: any) => {
-          this.reservasData = data;
-          this.reservasChanged.next(this.reservasData);
-          return this.reservasData;
-        }),
-        catchError((error: any) => {
-          console.error('Error fetching data:', error);
-          return of([]);
-        })
-      );
-  }
-
-  getReservasChanged(): Observable<any[]> {
-    return this.reservasChanged.asObservable();
+    return this.fetchReservasData().pipe(
+      map((data: any) => {
+        this.stateService.setReservasListState({
+          reservasPaginado: data,
+          reservasContent: data.content,
+        });
+        return data;
+      }),
+      catchError((error: any) => {
+        console.error('Error fetching data:', error);
+        return of([]);
+      })
+    );
   }
 
   private fetchReservasData(): Observable<any> {
-    return this.http.get(this.apiBaseUrl+'reservas/');
+    return this.http.get(this.apiBaseUrl + 'reservas/');
   }
 
   addReserva(reserva: string): void {
-    this.http.post(this.apiBaseUrl+'reservas/', reserva).subscribe((reserva: any) => {
-      this.reservasData.content.push(reserva);
-      this.reservasChanged.next(this.reservasData);
+    this.http.post(this.apiBaseUrl + 'reservas/', reserva).subscribe((reserva: any) => {
+      const currentState = this.stateService.getReservasListState();
+      const newReservasContent = [...currentState.reservasContent, reserva];
+      this.stateService.setReservasListState({
+        reservasContent: newReservasContent,
+        reservasPaginado: {
+          ...currentState.reservasPaginado,
+          content: newReservasContent,
+        },
+      });
     });
   }
 
   removeReserva(index: number): void {
-      // we need to send the delete request to the server, after that we can remove the reserva from the reservasData.content
-      this.http.delete(this.apiBaseUrl+'reservas/'+index).subscribe((reserva: any) => {
-        this.reservasData.content.splice(index, 1);
-        this.reservasChanged.next(this.reservasData);
-      }
-    );
+    this.http.delete(this.apiBaseUrl + 'reservas/' + index).subscribe(() => {
+      const currentState = this.stateService.getReservasListState();
+      console.log("current", currentState.reservasContent)
+      const newReservasContent = currentState.reservasContent.filter(
+        (reserva: any) => reserva.id !== index
+      );
+      console.log("new", newReservasContent)
+      this.stateService.setReservasListState({
+        reservasContent: newReservasContent,
+        reservasPaginado: {
+          ...currentState.reservasPaginado,
+          content: newReservasContent,
+        },
+      });
 
+      console.log("afterUpdating", this.stateService.getReservasListState().reservasContent, this.stateService.getReservasListState().reservasPaginado);
+    });
   }
-
-
 }
