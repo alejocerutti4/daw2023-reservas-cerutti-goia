@@ -19,24 +19,33 @@ export class ReservaListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.getReservaData();
-
-    this.stateService.setTitle('Listado de reservas');
-    this.stateService.setButtonContent('Nueva Reserva');
-    this.stateService.setShouldOpenModalReserva(false);
-
-    this.reservasListSuscriber = this.reservasService.getReservasChanged().subscribe((reservas: any) => {
-      this.reservasPaginado = reservas;
-      this.reservasContent = reservas.content;
-    });
-
-    this.stateService.shouldOpenModalReserva$.subscribe((shouldOpen: boolean) => {
-      this.shouldOpenModalReserva = shouldOpen;
-    });
-
+    this.initializeHeader();
+    this.suscribeToReservas();
+    this.suscribeToModal();
   }
 
   ngOnDestroy() {
     this.reservasListSuscriber.unsubscribe();
+  }
+
+  initializeHeader(){
+    this.stateService.setTitle('Listado de reservas');
+    this.stateService.setButtonContent('Nueva Reserva');
+    this.stateService.setShouldOpenModalReserva(false);
+    this.stateService.setOpenModal(this.openModalReserva);
+  }
+
+  suscribeToReservas() {
+    this.reservasListSuscriber = this.reservasService.getReservasChanged().subscribe((reservas: any) => {
+      this.reservasPaginado = reservas;
+      this.reservasContent = reservas.content;
+    });
+  }
+
+  suscribeToModal() {
+    this.stateService.getShouldOpenModalReserva().subscribe((shouldOpen: boolean) => {
+      this.shouldOpenModalReserva = shouldOpen;
+    });
   }
 
   removeReserva(id: number) {
@@ -52,6 +61,10 @@ export class ReservaListComponent implements OnInit, OnDestroy {
 
   onClose(){
     this.stateService.setShouldOpenModalReserva(false);
+  }
+
+  openModalReserva() {
+    this.stateService.setShouldOpenModalReserva(true);
   }
 
 }

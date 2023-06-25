@@ -9,21 +9,36 @@ import { StateService } from '../service/state.service';
 export class HeaderComponent {
   public title: string = '';
   public buttonContent: string = '';
+  public openModal: Function = () => {};
 
   constructor(private stateService: StateService) { }
 
   ngOnInit(): void {
-    this.stateService.title$.subscribe(title => {
+    this.suscribeToTitle();
+    this.suscribeToButtonContent();
+    this.suscribeToOpenModal();
+  }
+
+  openModalReserva() {
+    this.openModal();
+  }
+
+  suscribeToTitle() {
+    this.stateService.getTitle().subscribe((title: string) => {
       this.title = title;
     });
+  }
 
-    this.stateService.buttonContent$.subscribe(content => {
+  suscribeToButtonContent() {
+    this.stateService.getButtonContent().subscribe((content: string) => {
       this.buttonContent = content;
     });
   }
 
-  openModalReserva() {
-    this.stateService.setShouldOpenModalReserva(true);
+  suscribeToOpenModal() {
+    this.stateService.getOpenModal().subscribe((fn: Function) => {
+      this.openModal = fn;
+    });
   }
 
 }
