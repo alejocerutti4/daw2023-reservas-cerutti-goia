@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ReservasService } from '../service/reservas.service';
 import { Subscription } from 'rxjs';
 import { StateService } from '../service/state.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-reservas-list',
@@ -13,9 +14,15 @@ export class ReservaListComponent implements OnInit, OnDestroy {
   reservasContent: any[] = [];
   shouldOpenModalReserva: boolean = false;
   private reservasListSuscriber : Subscription = new Subscription();
+  reservaForm: FormGroup;
 
-
-  constructor(private reservasService: ReservasService, private stateService: StateService) { }
+  constructor(private formBuilder: FormBuilder, private reservasService: ReservasService, private stateService: StateService) { 
+    this.reservaForm = this.formBuilder.group({
+      fecha: ['', Validators.required],
+      hora: ['', Validators.required],
+      cantidadPersonas: [Number, [Validators.required, Validators.min(1)]],
+    });
+  }
 
   ngOnInit() {
     this.getReservaData();
@@ -75,5 +82,4 @@ export class ReservaListComponent implements OnInit, OnDestroy {
       this.reservasContent = reservas.content;
     });
   }
-
 }
