@@ -3,6 +3,29 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of, catchError, map } from 'rxjs';
 import { StateService } from './state.service';
 
+interface ReservaData {
+  fechaHoraCreacionReserva: string;
+  fechaHoraInicioReserva: string;
+  fechaHoraFinReserva: string;
+  comentario: string;
+  motivoReserva: string;
+  motivoRechazo: string;
+  cantidadPersonas: number;
+  solicitante: {
+    id: number;
+  };
+  espacioFisico: {
+    id: number;
+    recursos?: {
+      id: number;
+    }[];
+  };
+  estado: {
+    id: number;
+  };
+}
+
+
 @Injectable({
   providedIn: 'root',
 })
@@ -31,7 +54,8 @@ export class ReservasService {
     return this.http.get(this.apiBaseUrl + 'reservas/');
   }
 
-  addReserva(reserva: string): void {
+  addReserva(reserva: ReservaData): void {
+    console.log("Entro aca");
     this.http.post(this.apiBaseUrl + 'reservas/', reserva).subscribe((reserva: any) => {
       const currentState = this.stateService.getReservasListState();
       const newReservasContent = [...currentState.reservasContent, reserva];

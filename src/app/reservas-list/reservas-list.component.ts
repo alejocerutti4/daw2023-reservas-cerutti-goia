@@ -18,9 +18,17 @@ export class ReservaListComponent implements OnInit, OnDestroy {
 
   constructor(private formBuilder: FormBuilder, private reservasService: ReservasService, private stateService: StateService) { 
     this.reservaForm = this.formBuilder.group({
-      fecha: ['', Validators.required],
-      hora: ['', Validators.required],
+      //Dos campos para la fecha y la hora de inicio por separado
+      fechaInicio: ['', Validators.required],
+      horaInicio: ['', Validators.required],
+      //Dos campos para la fecha y la hora de fin por separado
+      fechaFin: ['', Validators.required],
+      horaFin: ['', Validators.required],
+      motivoReserva: [''],
       cantidadPersonas: [Number, [Validators.required, Validators.min(1)]],
+      comentario: [''],
+      motivoRechazo: [''],
+      //falta solicitante y espacioFisico con la eleccion de sus recursos.
     });
   }
 
@@ -81,5 +89,49 @@ export class ReservaListComponent implements OnInit, OnDestroy {
       this.reservasPaginado = reservas;
       this.reservasContent = reservas.content;
     });
+  }
+
+  addReserva(){
+    if (this.reservaForm.valid) {
+      // Se arma el localDateTime de la fechaHoraInicioReserva y fechaHoraFinReserva
+
+      const fechaInicio = this.reservaForm.value.fechaInicio;
+      const horaInicio = this.reservaForm.value.horaInicio;
+      const fechaFin = this.reservaForm.value.fechaFin;
+      const horaFin = this.reservaForm.value.horaFin;
+
+      const fechaHoraInicio = `${fechaInicio}T${horaInicio}:00`;
+      const fechaHoraFin = `${fechaFin}T${horaFin}:00`;
+
+      // Se arma la fechaHoraCreacionReserva, que es la actual
+      const fechaActual = new Date();
+      const anio = fechaActual.getFullYear();
+      const mes = String(fechaActual.getMonth() + 1).padStart(2, "0");
+      const dia = String(fechaActual.getDate()).padStart(2, "0");
+      const hora = String(fechaActual.getHours()).padStart(2, "0");
+      const minutos = String(fechaActual.getMinutes()).padStart(2, "0");
+      const segundos = String(fechaActual.getSeconds()).padStart(2, "0");
+      
+      const fechaHoraCreacion = `${anio}-${mes}-${dia}T${hora}:${minutos}:${segundos}`;
+
+      // Creacion la nueva reserva
+      const nuevaReserva = {
+        fechaHoraCreacionReserva: fechaHoraCreacion,
+        fechaHoraInicioReserva: fechaHoraInicio,
+        fechaHoraFinReserva: fechaHoraFin,
+        motivoReserva: this.reservaForm.value.motivoReserva,
+        cantidadPersonas: this.reservaForm.value.cantidadPersonas,
+        comentario: this.reservaForm.value.comentario,
+        motivoRechazo: this.reservaForm.value.motivoRechazo,
+        solicitante: {id: 2},
+        espacioFisico: {id: 1},
+        estado: {id: 1}
+      };
+
+      console.log("Aca")
+  
+      // Aquí puedes llamar a tu servicio o realizar cualquier otra lógica para registrar la reserva
+      this.reservasService.addReserva(nuevaReserva)
+    }
   }
 }

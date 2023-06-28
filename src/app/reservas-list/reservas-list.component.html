@@ -41,22 +41,38 @@
         <div class="modal-body">
           <form [formGroup]="reservaForm">
             <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon1">Fecha:</span>
-              <input type="date" id="fecha" formControlName="fecha" class="form-control" placeholder="dd/mm/aaaa">
+              <span class="input-group-text" id="basic-addon1">Fecha de reserva:</span>
+              <input type="date" id="fechaInicio" formControlName="fechaInicio" class="form-control" placeholder="dd/mm/aaaa">
             </div>
             <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon1">Hora:</span>
-              <input type="time" id="hora" formControlName="hora" class="form-control">
+              <span class="input-group-text" id="basic-addon1">Hora de inicio:</span>
+              <input type="time" id="horaInicio" formControlName="horaInicio" class="form-control">
             </div>
             <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon1">Cantidad de Personas:</span>
+              <span class="input-group-text" id="basic-addon1">Fecha fin de reserva:</span>
+              <input type="date" id="fechaFin" formControlName="fechaFin" class="form-control" placeholder="dd/mm/aaaa">
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1">Hora fin de reserva:</span>
+              <input type="time" id="horaFin" formControlName="horaFin" class="form-control">
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1">Motivo de reserva:</span>
+              <input type="text" id="motivoReserva" formControlName="motivoReserva" class="form-control">
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1">Cantidad de personas:</span>
               <input type="number" id="cantidadPersonas" formControlName="cantidadPersonas" class="form-control">
+            </div>
+            <div class="input-group">
+              <span class="input-group-text">Comentario:</span>
+              <textarea id="comentario" formControlName="comentario" class="form-control"></textarea>
             </div>
           </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="onClose()">Close</button>
-          <button type="button" class="btn btn-primary" (click)="onClose()">Save changes</button>
+          <button type="button" class="btn btn-primary" (click)="addReserva()">Save changes</button>
         </div>
       </div>
     </div>
