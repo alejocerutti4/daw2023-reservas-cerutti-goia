@@ -132,6 +132,7 @@ export class ReservaListComponent implements OnInit, OnDestroy {
   
       // Aquí puedes llamar a tu servicio o realizar cualquier otra lógica para registrar la reserva
       this.reservasService.addReserva(nuevaReserva)
+      this.onClose();
     }
   }
 }
