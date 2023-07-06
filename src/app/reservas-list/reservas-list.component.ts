@@ -3,6 +3,7 @@ import { ReservasService } from '../service/reservas.service';
 import { Subscription } from 'rxjs';
 import { StateService } from '../service/state.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { EspaciosFisicosService } from '../service/espacios-fisicos.service';
 
 @Component({
   selector: 'app-reservas-list',
@@ -10,13 +11,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./reservas-list.component.css']
 })
 export class ReservaListComponent implements OnInit, OnDestroy {
+  espaciosFisicos: any[] = [];
   reservasPaginado: any;
   reservasContent: any[] = [];
   shouldOpenModalReserva: boolean = false;
   private reservasListSuscriber : Subscription = new Subscription();
   reservaForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private reservasService: ReservasService, private stateService: StateService) { 
+  constructor(private formBuilder: FormBuilder, private reservasService: ReservasService, private stateService: StateService, private espaciosFisicosService: EspaciosFisicosService) { 
     this.reservaForm = this.formBuilder.group({
       //Dos campos para la fecha y la hora de inicio por separado
       fechaInicio: ['', Validators.required],
@@ -33,6 +35,7 @@ export class ReservaListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.getEspaciosFisicos();
     this.getReservaData();
     this.initializeHeader();
     this.suscribeToReservas();
@@ -89,6 +92,17 @@ export class ReservaListComponent implements OnInit, OnDestroy {
       this.reservasPaginado = reservas;
       this.reservasContent = reservas.content;
     });
+  }
+
+  private getEspaciosFisicos(){
+    this.espaciosFisicosService.getEspaciosFisicos().subscribe(
+      (response) => {
+        this.espaciosFisicos = response;
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
   }
 
   addReserva(){

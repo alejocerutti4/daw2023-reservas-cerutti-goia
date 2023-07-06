@@ -41,6 +41,14 @@
         <div class="modal-body">
           <form [formGroup]="reservaForm">
             <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1">Espacio Físico</span>
+              <select class="form-select form-select-lg" aria-label=".form-select-lg example">
+                <option *ngFor="let espacio of espaciosFisicos" [value]="espacio.id">
+                  {{ espacio.nombre }}
+                </option>
+              </select>
+            </div>
+            <div class="input-group mb-3">
               <span class="input-group-text" id="basic-addon1">Fecha de reserva:</span>
               <input type="date" id="fechaInicio" formControlName="fechaInicio" class="form-control" placeholder="dd/mm/aaaa">
             </div>
