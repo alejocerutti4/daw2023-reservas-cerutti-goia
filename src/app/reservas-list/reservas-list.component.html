@@ -41,12 +41,44 @@
         <div class="modal-body">
           <form [formGroup]="reservaForm">
             <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon1">Espacio Físico</span>
-              <select class="form-select form-select-lg" aria-label=".form-select-lg example">
+              <span class="input-group-text" id="basic-addon1">Solicitante:</span>
+              <select class="form-select form-select-lg" aria-label=".form-select-lg">
+                <option *ngFor="let solicitante of solicitantes" [value]="solicitante.id">
+                  {{ solicitante.nombre }} {{ solicitante.apellido }} 
+                </option>
+              </select>
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1">Espacio físico:</span>
+              <select class="form-select form-select-lg" aria-label=".form-select-lg">
                 <option *ngFor="let espacio of espaciosFisicos" [value]="espacio.id">
                   {{ espacio.nombre }}
                 </option>
               </select>
+            </div>
+            <div class="input-group mb-3">
+              <label for="resourceTable " class="form-label">Recursos solicitados:</label>
+              <table class="table table-hover border" id="resourceTable ">
+                <thead>
+                  <th>#</th>
+                  <th>Nombre</th>
+                  <th>Descripción</th>
+                </thead>
+                <tbody class="table-group-divider">
+                  <tr>
+                    <th>1</th>
+                    <td>Proyector</td>
+                    <td>Marca Lenovo</td>
+                    <td><input type="checkbox" class="row-select"></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>Proyector</td>
+                    <td>Marca Lenovo</td>
+                    <td><input type="checkbox" class="row-select"></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
             <div class="input-group mb-3">
               <span class="input-group-text" id="basic-addon1">Fecha de reserva:</span>

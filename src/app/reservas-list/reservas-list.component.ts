@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { StateService } from '../service/state.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EspaciosFisicosService } from '../service/espacios-fisicos.service';
+import { SolicitantesService } from '../service/solicitantes.service';
 
 @Component({
   selector: 'app-reservas-list',
@@ -12,13 +13,20 @@ import { EspaciosFisicosService } from '../service/espacios-fisicos.service';
 })
 export class ReservaListComponent implements OnInit, OnDestroy {
   espaciosFisicos: any[] = [];
+  solicitantes: any[] = [];
   reservasPaginado: any;
   reservasContent: any[] = [];
   shouldOpenModalReserva: boolean = false;
   private reservasListSuscriber : Subscription = new Subscription();
   reservaForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private reservasService: ReservasService, private stateService: StateService, private espaciosFisicosService: EspaciosFisicosService) { 
+  constructor(
+    private formBuilder: FormBuilder, 
+    private reservasService: ReservasService, 
+    private stateService: StateService, 
+    private espaciosFisicosService: EspaciosFisicosService,
+    private solicitantesService: SolicitantesService
+    ) { 
     this.reservaForm = this.formBuilder.group({
       //Dos campos para la fecha y la hora de inicio por separado
       fechaInicio: ['', Validators.required],
@@ -36,6 +44,7 @@ export class ReservaListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.getEspaciosFisicos();
+    this.getSolicitantes();
     this.getReservaData();
     this.initializeHeader();
     this.suscribeToReservas();
@@ -98,6 +107,17 @@ export class ReservaListComponent implements OnInit, OnDestroy {
     this.espaciosFisicosService.getEspaciosFisicos().subscribe(
       (response) => {
         this.espaciosFisicos = response;
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+
+  private getSolicitantes(){
+    this.solicitantesService.getSolicitantes().subscribe(
+      (response) => {
+        this.solicitantes = response;
       },
       (error) => {
         console.error(error);

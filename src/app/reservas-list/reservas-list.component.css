@@ -6,3 +6,19 @@
   visibility: visible;
   display: block;
 }
+
+.table.rounded > tbody > tr:first-child > td:first-child {
+  border-top-left-radius: 6px;
+}
+
+.table.rounded > tbody > tr:first-child > td:last-child {
+  border-top-right-radius: 6px;
+}
+
+.table.rounded > tbody > tr:last-child > td:first-child {
+  border-bottom-left-radius: 6px;
+}
+
+.table.rounded > tbody > tr:last-child > td:last-child {
+  border-bottom-right-radius: 6px;
+}
