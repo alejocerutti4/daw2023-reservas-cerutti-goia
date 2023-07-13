@@ -14,6 +14,7 @@ import { SolicitantesService } from '../service/solicitantes.service';
 export class ReservaListComponent implements OnInit, OnDestroy {
   espaciosFisicos: any[] = [];
   solicitantes: any[] = [];
+  recursosEspacioFisico: any[] = [];
   reservasPaginado: any;
   reservasContent: any[] = [];
   shouldOpenModalReserva: boolean = false;
@@ -51,6 +52,7 @@ export class ReservaListComponent implements OnInit, OnDestroy {
     this.initializeHeader();
     this.suscribeToReservas();
     this.suscribeToState();
+    this.suscribeToEspacioFisico();
   }
 
   ngOnDestroy() {
@@ -127,6 +129,25 @@ export class ReservaListComponent implements OnInit, OnDestroy {
     );
   }
 
+  private suscribeToEspacioFisico(){
+    const espacioFisicoControl = this.reservaForm.get('espacioFisicoSeleccionado');
+    if (espacioFisicoControl) {
+      espacioFisicoControl.valueChanges.subscribe((espacioFisicoId) => {
+        this.actualizarRecursos(espacioFisicoId);
+      });
+    }
+  }
+
+    // Método para actualizar la lista de recursos según el espacio físico seleccionado
+    actualizarRecursos(espacioFisicoId: any) {
+      const espacioFisicoSeleccionado = this.espaciosFisicos.find((espacioFisico) => espacioFisico.id == espacioFisicoId);
+      if (espacioFisicoSeleccionado) {
+        this.recursosEspacioFisico = espacioFisicoSeleccionado.recursos;
+      } else {
+        this.recursosEspacioFisico = [];
+      }
+    }
+
   addReserva(){
     if (this.reservaForm.valid) {
       // Se arma el localDateTime de la fechaHoraInicioReserva y fechaHoraFinReserva
@@ -163,8 +184,6 @@ export class ReservaListComponent implements OnInit, OnDestroy {
         espacioFisico: {id: 1},
         estado: {id: 1}
       };
-
-      console.log("Aca")
   
       // Aquí puedes llamar a tu servicio o realizar cualquier otra lógica para registrar la reserva
       this.reservasService.addReserva(nuevaReserva)
