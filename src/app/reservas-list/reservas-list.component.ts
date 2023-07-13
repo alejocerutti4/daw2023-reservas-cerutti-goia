@@ -38,6 +38,8 @@ export class ReservaListComponent implements OnInit, OnDestroy {
       cantidadPersonas: [Number, [Validators.required, Validators.min(1)]],
       comentario: [''],
       motivoRechazo: [''],
+      solicitanteId:  ['', Validators.required],
+      espacioFisicoSeleccionado: ['', Validators.required],
       //falta solicitante y espacioFisico con la eleccion de sus recursos.
     });
   }

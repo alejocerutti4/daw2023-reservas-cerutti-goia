@@ -42,7 +42,7 @@
           <form [formGroup]="reservaForm">
             <div class="input-group mb-3">
               <span class="input-group-text" id="basic-addon1">Solicitante:</span>
-              <select class="form-select form-select-lg" aria-label=".form-select-lg">
+              <select class="form-select form-select-lg" aria-label=".form-select-lg" formControlName="solicitanteId">
                 <option *ngFor="let solicitante of solicitantes" [value]="solicitante.id">
                   {{ solicitante.nombre }} {{ solicitante.apellido }} 
                 </option>
@@ -50,7 +50,7 @@
             </div>
             <div class="input-group mb-3">
               <span class="input-group-text" id="basic-addon1">Espacio físico:</span>
-              <select class="form-select form-select-lg" aria-label=".form-select-lg">
+              <select class="form-select form-select-lg" aria-label=".form-select-lg" formControlName="espacioFisicoSeleccionado">
                 <option *ngFor="let espacio of espaciosFisicos" [value]="espacio.id">
                   {{ espacio.nombre }}
                 </option>
