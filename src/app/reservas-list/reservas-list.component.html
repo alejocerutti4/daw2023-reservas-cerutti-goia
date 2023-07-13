@@ -67,7 +67,7 @@
                   <tr *ngFor="let recurso of recursosEspacioFisico; let i = index">
                     <td>{{ recurso.nombre }}</td>
                     <td>{{ recurso.descripcion }}</td>
-                    <td><input type="checkbox" class="row-select"></td>
+                    <td><input type="checkbox" class="row-select" [checked]="recurso.seleccionado" (change)="onRecursoSeleccionado(recurso)"></td>
                   </tr>
                 </tbody>
               </table>
@@ -92,11 +92,12 @@
               <span class="input-group-text" id="basic-addon1">Motivo de reserva:</span>
               <input type="text" id="motivoReserva" formControlName="motivoReserva" class="form-control">
             </div>
-            <div class="input-group mb-3">
+            <div class="input-group">
               <span class="input-group-text" id="basic-addon1">Cantidad de personas:</span>
               <input type="number" id="cantidadPersonas" formControlName="cantidadPersonas" class="form-control">
             </div>
-            <div class="input-group">
+            <small class="text-muted">Máximo para el espacio fisico seleccionado: {{ maxPersonas }} personas.</small>
+            <div class="input-group mt-3">
               <span class="input-group-text">Comentario:</span>
               <textarea id="comentario" formControlName="comentario" class="form-control"></textarea>
             </div>

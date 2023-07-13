@@ -15,6 +15,8 @@ export class ReservaListComponent implements OnInit, OnDestroy {
   espaciosFisicos: any[] = [];
   solicitantes: any[] = [];
   recursosEspacioFisico: any[] = [];
+  recursosSeleccionados: any[] = [];
+  maxPersonas: number = 0;
   reservasPaginado: any;
   reservasContent: any[] = [];
   shouldOpenModalReserva: boolean = false;
@@ -41,6 +43,7 @@ export class ReservaListComponent implements OnInit, OnDestroy {
       motivoRechazo: [''],
       solicitanteId:  ['', Validators.required],
       espacioFisicoSeleccionado: ['', Validators.required],
+      recursosSeleccionados: [[]],
       //falta solicitante y espacioFisico con la eleccion de sus recursos.
     });
   }
@@ -133,18 +136,42 @@ export class ReservaListComponent implements OnInit, OnDestroy {
     const espacioFisicoControl = this.reservaForm.get('espacioFisicoSeleccionado');
     if (espacioFisicoControl) {
       espacioFisicoControl.valueChanges.subscribe((espacioFisicoId) => {
-        this.actualizarRecursos(espacioFisicoId);
+        // actualizacion de los recursos
+        this.actualizarDatos(espacioFisicoId);
       });
     }
   }
 
-    // Método para actualizar la lista de recursos según el espacio físico seleccionado
-    actualizarRecursos(espacioFisicoId: any) {
+    // Método para actualizar datos según el espacio físico seleccionado
+    actualizarDatos(espacioFisicoId: any) {
       const espacioFisicoSeleccionado = this.espaciosFisicos.find((espacioFisico) => espacioFisico.id == espacioFisicoId);
       if (espacioFisicoSeleccionado) {
-        this.recursosEspacioFisico = espacioFisicoSeleccionado.recursos;
+        this.recursosEspacioFisico = espacioFisicoSeleccionado.recursos.map((recurso: any) => {
+          return {
+            ...recurso,
+            seleccionado: false // Agregar la propiedad 'seleccionado' y establecerla en 'false' inicialmente
+          };
+        });
+
+        this.maxPersonas = espacioFisicoSeleccionado.capacidad;
       } else {
         this.recursosEspacioFisico = [];
+        this.maxPersonas = 0;
+      }
+    }
+
+    onRecursoSeleccionado(recurso: any) {
+      recurso.seleccionado = !recurso.seleccionado; // Invertir el estado del recurso seleccionado
+    
+      if (recurso.seleccionado) {
+        // Agregar el recurso al arreglo de recursos seleccionados
+        this.recursosSeleccionados.push(recurso);
+      } else {
+        // Eliminar el recurso del arreglo de recursos seleccionados
+        const index = this.recursosSeleccionados.indexOf(recurso);
+        if (index > -1) {
+          this.recursosSeleccionados.splice(index, 1);
+        }
       }
     }
 
@@ -170,6 +197,11 @@ export class ReservaListComponent implements OnInit, OnDestroy {
       const segundos = String(fechaActual.getSeconds()).padStart(2, "0");
       
       const fechaHoraCreacion = `${anio}-${mes}-${dia}T${hora}:${minutos}:${segundos}`;
+
+      // Asignar los recursos seleccionados al formulario
+      this.reservaForm.patchValue({
+        recursosSeleccionados: this.recursosSeleccionados
+      });
 
       // Creacion la nueva reserva
       const nuevaReserva = {
