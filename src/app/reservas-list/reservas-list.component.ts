@@ -41,10 +41,9 @@ export class ReservaListComponent implements OnInit, OnDestroy {
       cantidadPersonas: [Number, [Validators.required, Validators.min(1)]],
       comentario: [''],
       motivoRechazo: [''],
-      solicitanteId:  ['', Validators.required],
-      espacioFisicoSeleccionado: ['', Validators.required],
+      solicitanteId:  [Number, Validators.required],
+      espacioFisicoSeleccionado: [Number, Validators.required],
       recursosSeleccionados: [[]],
-      //falta solicitante y espacioFisico con la eleccion de sus recursos.
     });
   }
 
@@ -107,6 +106,7 @@ export class ReservaListComponent implements OnInit, OnDestroy {
     this.reservasService.getReservas().subscribe((reservas: any) => {
       this.reservasPaginado = reservas;
       this.reservasContent = reservas.content;
+      console.log(reservas.content);
     });
   }
 
@@ -138,6 +138,7 @@ export class ReservaListComponent implements OnInit, OnDestroy {
       espacioFisicoControl.valueChanges.subscribe((espacioFisicoId) => {
         // actualizacion de los recursos
         this.actualizarDatos(espacioFisicoId);
+        this.cleanSelectedResources();
       });
     }
   }
@@ -162,17 +163,22 @@ export class ReservaListComponent implements OnInit, OnDestroy {
 
     onRecursoSeleccionado(recurso: any) {
       recurso.seleccionado = !recurso.seleccionado; // Invertir el estado del recurso seleccionado
+
+      const recursosSeleccionadosControl = this.reservaForm.get('recursosSeleccionados');
+      const recursosSeleccionados = recursosSeleccionadosControl?.value as any[]; // Obtener el valor actual del array
     
       if (recurso.seleccionado) {
-        // Agregar el recurso al arreglo de recursos seleccionados
-        this.recursosSeleccionados.push(recurso);
+        recursosSeleccionados.push(recurso); // Agregar el nuevo recurso al array
       } else {
         // Eliminar el recurso del arreglo de recursos seleccionados
-        const index = this.recursosSeleccionados.indexOf(recurso);
-        if (index > -1) {
-          this.recursosSeleccionados.splice(index, 1);
-        }
+        const nuevosRecursosSeleccionados = recursosSeleccionados.filter(r => r !== recurso);
+        recursosSeleccionadosControl?.setValue(nuevosRecursosSeleccionados);
       }
+    }
+
+    cleanSelectedResources(){
+      const recursosSeleccionadosControl = this.reservaForm.get('recursosSeleccionados');
+      recursosSeleccionadosControl?.setValue([]);
     }
 
   addReserva(){
@@ -198,22 +204,18 @@ export class ReservaListComponent implements OnInit, OnDestroy {
       
       const fechaHoraCreacion = `${anio}-${mes}-${dia}T${hora}:${minutos}:${segundos}`;
 
-      // Asignar los recursos seleccionados al formulario
-      this.reservaForm.patchValue({
-        recursosSeleccionados: this.recursosSeleccionados
-      });
-
       // Creacion la nueva reserva
       const nuevaReserva = {
         fechaHoraCreacionReserva: fechaHoraCreacion,
         fechaHoraInicioReserva: fechaHoraInicio,
         fechaHoraFinReserva: fechaHoraFin,
-        motivoReserva: this.reservaForm.value.motivoReserva,
-        cantidadPersonas: this.reservaForm.value.cantidadPersonas,
         comentario: this.reservaForm.value.comentario,
+        motivoReserva: this.reservaForm.value.motivoReserva,
         motivoRechazo: this.reservaForm.value.motivoRechazo,
-        solicitante: {id: 2},
-        espacioFisico: {id: 1},
+        cantidadPersonas: this.reservaForm.value.cantidadPersonas,
+        solicitante: {id: this.reservaForm.value.solicitanteId},
+        espacioFisico: {id: this.reservaForm.value.espacioFisicoSeleccionado},
+        recursosSolicitados: this.reservaForm.value.recursosSeleccionados,
         estado: {id: 1}
       };
   

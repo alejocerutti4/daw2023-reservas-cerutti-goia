@@ -20,6 +20,11 @@ interface ReservaData {
       id: number;
     }[];
   };
+  recursosSolicitados?: [
+    {
+      id: number
+    }
+  ];
   estado: {
     id: number;
   };
@@ -56,6 +61,7 @@ export class ReservasService {
 
   addReserva(reserva: ReservaData): void {
     console.log("Entro aca");
+    console.log(reserva)
     this.http.post(this.apiBaseUrl + 'reservas/', reserva).subscribe((reserva: any) => {
       const currentState = this.stateService.getReservasListState();
       const newReservasContent = [...currentState.reservasContent, reserva];
