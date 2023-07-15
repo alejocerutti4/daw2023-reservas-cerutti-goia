@@ -60,8 +60,6 @@ export class ReservasService {
   }
 
   addReserva(reserva: ReservaData): void {
-    console.log("Entro aca");
-    console.log(reserva)
     this.http.post(this.apiBaseUrl + 'reservas/', reserva).subscribe((reserva: any) => {
       const currentState = this.stateService.getReservasListState();
       const newReservasContent = [...currentState.reservasContent, reserva];
@@ -94,4 +92,24 @@ export class ReservasService {
       console.log("afterUpdating", this.stateService.getReservasListState().reservasContent, this.stateService.getReservasListState().reservasPaginado);
     });
   }
+
+  updateReserva(reserva: ReservaData, idReserva: Number): void {
+    this.http.put(this.apiBaseUrl + 'reservas/' + idReserva, reserva).subscribe((reservaResponse: any) => {
+      const currentState = this.stateService.getReservasListState();
+      const newReservasContent = currentState.reservasContent.map((reserva: any) => {
+        if (reserva.id === idReserva) {
+          return reservaResponse;
+        }
+        return reserva;
+      });
+      this.stateService.setReservasListState({
+        reservasContent: newReservasContent,
+        reservasPaginado: {
+          ...currentState.reservasPaginado,
+          content: newReservasContent,
+        },
+      });
+    });
+  };
+
 }

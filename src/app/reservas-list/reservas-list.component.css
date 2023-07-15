@@ -1,4 +1,6 @@
 .table-container {
+  width: calc(100% - 100px);
+  padding: 20px;
   margin-left: 100px;
 }
 
@@ -13,4 +15,10 @@
 
 .input-cantidad-personas{
   width: 100px;
+}
+
+.estado {
+  padding: 6px;
+  border-radius: 8px;
+  color: black;
 }
