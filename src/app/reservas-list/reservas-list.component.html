@@ -96,11 +96,12 @@
               <input type="number" id="cantidadPersonas" formControlName="cantidadPersonas" class="form-control">
             </div>
             <small class="text-muted">Máximo para el espacio fisico seleccionado: {{ maxPersonas }} personas.</small>
-            <div class="input-group mt-3">
+            <div class="input-group mt-3 mb-3">
               <span class="input-group-text">Comentario:</span>
               <textarea id="comentario" formControlName="comentario" class="form-control"></textarea>
             </div>
           </form>
+          <div class="error-message" *ngIf="errorMessage"><i class="bi bi-exclamation-octagon-fill"></i>  {{errorMessage}}</div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="onClose()">Close</button>
