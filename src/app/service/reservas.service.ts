@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, catchError, map } from 'rxjs';
+import { Observable, of, catchError, map, throwError } from 'rxjs';
 import { StateService } from './state.service';
 
 interface ReservaData {
@@ -59,19 +59,25 @@ export class ReservasService {
     return this.http.get(this.apiBaseUrl + 'reservas/');
   }
 
-  addReserva(reserva: ReservaData): void {
-    this.http.post(this.apiBaseUrl + 'reservas/', reserva).subscribe((reserva: any) => {
-      const currentState = this.stateService.getReservasListState();
-      const newReservasContent = [...currentState.reservasContent, reserva];
-      this.stateService.setReservasListState({
-        reservasContent: newReservasContent,
-        reservasPaginado: {
-          ...currentState.reservasPaginado,
-          content: newReservasContent,
-        },
-      });
-    });
-  }
+  addReserva(reserva: ReservaData): Observable<any> {
+    return this.http.post(this.apiBaseUrl + 'reservas/', reserva).pipe(
+      map((reserva: any) => {
+        // Manejo exitoso de la reserva agregada
+        const currentState = this.stateService.getReservasListState();
+        const newReservasContent = [...currentState.reservasContent, reserva];
+        this.stateService.setReservasListState({
+          reservasContent: newReservasContent,
+          reservasPaginado: {
+            ...currentState.reservasPaginado,
+            content: newReservasContent,
+          },
+        });
+      }),
+      catchError((error) => {
+        return throwError(() => error); // Devuelve el error completo incluyendo el cuerpo (body) del error.
+      })
+    );
+  } 
 
   removeReserva(index: number): void {
     this.http.delete(this.apiBaseUrl + 'reservas/' + index).subscribe(() => {
@@ -93,8 +99,9 @@ export class ReservasService {
     });
   }
 
-  updateReserva(reserva: ReservaData, idReserva: Number): void {
-    this.http.put(this.apiBaseUrl + 'reservas/' + idReserva, reserva).subscribe((reservaResponse: any) => {
+  updateReserva(reserva: ReservaData, idReserva: Number):  Observable<any> {
+    return this.http.put(this.apiBaseUrl + 'reservas/' + idReserva, reserva).pipe(
+      map((reservaResponse: any) => {
       const currentState = this.stateService.getReservasListState();
       const newReservasContent = currentState.reservasContent.map((reserva: any) => {
         if (reserva.id === idReserva) {
@@ -109,7 +116,9 @@ export class ReservasService {
           content: newReservasContent,
         },
       });
-    });
-  };
-
-}
+    }),
+    catchError((error) => {
+      return throwError(() => error); // Devuelve el error completo incluyendo el cuerpo (body) del error.
+    }));
+  }
+} 

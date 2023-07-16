@@ -22,3 +22,12 @@
   border-radius: 8px;
   color: black;
 }
+
+.error-message {
+  border-radius: 4px;
+  font-weight: bold;
+  width: 100%;
+  padding: 20px;
+  background-color: #ff4136;
+  color: #fff;
+}

@@ -5,6 +5,7 @@ import { StateService } from '../service/state.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EspaciosFisicosService } from '../service/espacios-fisicos.service';
 import { SolicitantesService } from '../service/solicitantes.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-reservas-list',
@@ -22,6 +23,7 @@ export class ReservaListComponent implements OnInit, OnDestroy {
   shouldOpenModalReserva: boolean = false;
   reservaForm: FormGroup;
   isEditing: boolean = false;
+  errorMessage : string = "";
   private reservasListSuscriber: Subscription = new Subscription();
 
   constructor(
@@ -103,6 +105,7 @@ export class ReservaListComponent implements OnInit, OnDestroy {
     this.stateService.setReservasListState({
       shouldOpenModalReserva: false,
     });
+    this.errorMessage="";
   }
 
   openModalReserva(reserva: any) {
@@ -130,7 +133,9 @@ export class ReservaListComponent implements OnInit, OnDestroy {
       this.isEditing = true;
       this.actualizarDatos(reserva.espacioFisico.id);
     } else {
-      this.reservaForm.reset();
+      if (this.reservaForm){
+        this.reservaForm.reset();
+      }
     }
   }
 
@@ -173,6 +178,7 @@ export class ReservaListComponent implements OnInit, OnDestroy {
         // actualizacion de los recursos
         this.actualizarDatos(espacioFisicoId);
         this.cleanSelectedResources();
+        this.errorMessage = "";
       });
     }
   }
@@ -283,14 +289,44 @@ export class ReservaListComponent implements OnInit, OnDestroy {
       };
 
       // Aquí puedes llamar a tu servicio o realizar cualquier otra lógica para registrar la reserva
-      if(!this.isEditing) {
-        this.reservasService.addReserva(nuevaReserva);
+      if (!this.isEditing) {
+        this.reservasService.addReserva(nuevaReserva).subscribe(
+          (response: any) => {
+            this.onClose();
+            this.reservaForm.reset();
+          },
+          (error: HttpErrorResponse) => {
+            this.setErrorMessage(error);
+          }
+        );
       } else {
-        this.reservasService.updateReserva(nuevaReserva, this.reservaForm.value.id);
+        this.reservasService.updateReserva(nuevaReserva, this.reservaForm.value.id).subscribe(
+          (response: any) => {
+            this.onClose();
+            this.reservaForm.reset();
+          },
+          (error: HttpErrorResponse) => {
+            this.setErrorMessage(error);
+          }
+        );
       }
+    }
+  }
 
-      this.onClose();
-      this.reservaForm.reset();
+  private setErrorMessage(error: any){
+    // Capturar el error y mostrar el mensaje adecuado según el código de error
+    if (error.status === 400) {
+      this.errorMessage = 'Error: Solicitud inválida.';
+    } else if (error.status === 404) {
+      this.errorMessage = 'Error: Recurso no encontrado.';
+    } else if (error.error.errorCode === 50) {
+      this.errorMessage = "Espacio Fisico no disponible.";
+    } else if (error.error.errorCode === 51) {
+      this.errorMessage = "Hay superposicion horaria con una reserva ya existente. Elegir otro lugar u otro horario";
+    } else if (error.status === 500) {
+      this.errorMessage = 'Error: Error interno del servidor.';
+    } else {
+      this.errorMessage = 'Error no manejado:';
     }
   }
 }
