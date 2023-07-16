@@ -145,6 +145,7 @@ export class ReservaListComponent implements OnInit, OnDestroy {
     this.reservasService.getReservas().subscribe((reservas: any) => {
       this.reservasPaginado = reservas;
       this.reservasContent = reservas.content;
+      console.log(this.reservasContent)
     });
   }
 
@@ -330,5 +331,17 @@ export class ReservaListComponent implements OnInit, OnDestroy {
     } else {
       this.errorMessage = 'Error no manejado:';
     }
+  }
+
+  getRecursosForTooltip(recursos: any) {
+    let recursosList = '<span>Recursos Disponibles: </span>';
+
+    recursos.forEach((recurso: any) => {
+      recursosList += `<span>• ${recurso.nombre}</span>`;
+    });
+
+    recursosList += '';
+
+    return recursosList;
   }
 }

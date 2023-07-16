@@ -8,6 +8,7 @@
       <th>Fecha Inicio - Fecha Fin</th>
       <th>Horario</th>
       <th>C. Personas</th>
+      <th>R. Asignados</th>
       <th>Estado</th>
       <th>Actions</th>
     </tr>
@@ -21,6 +22,21 @@
       <td>{{ reserva.fechaHoraInicioReserva | date: 'dd/MM/yyyy' }} - {{reserva.fechaHoraFinReserva | date: 'dd/MM/yyyy' }}</td>
       <td>{{ reserva.fechaHoraInicioReserva | date: 'HH:mm' }} - {{ reserva.fechaHoraFinReserva | date: 'HH:mm' }}</td>
       <td>{{ reserva.cantidadPersonas }}</td>
+      <td>
+        <span>
+          {{ reserva.recursosSolicitados?.[0]?.nombre ?? '' }}
+        </span>
+        <div
+          *ngIf="(reserva.recursosSolicitados?.length ?? 0) - 1 > 0"
+          class="has-tooltip south badge bg-primary"
+        >
+          +{{ (reserva.recursosSolicitados?.length ?? 0) - 1 }}
+          <span
+            class="tooltip"
+            [innerHTML]="getRecursosForTooltip(reserva?.recursosSolicitados)"
+          ></span>
+        </div>
+      </td>
       <td><span class="estado" [style.background]="reserva.estado.color">{{ reserva.estado.nombre }}</span></td>
       <td>
         <button class="btn btn-warning btn-sm m-1" (click)="openModalReserva(reserva)">
