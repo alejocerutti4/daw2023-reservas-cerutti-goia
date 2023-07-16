@@ -1,0 +1,200 @@
+<table class="table table-striped table-container">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Descripción</th>
+      <th>Capacidad</th>
+      <th>Estado</th>
+      <th>Recursos</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let espacio of espaciosFisicos">
+      <td>{{ espacio.nombre ?? "" }}</td>
+      <td>{{ espacio.descripcion ?? "" }}</td>
+      <td>{{ espacio.capacidad ?? "" }}</td>
+      <td>
+        <span class="estado" [style.background]="espacio.estado?.color">{{
+          espacio.estado?.nombre ?? ""
+        }}</span>
+      </td>
+      <td>
+        <span>
+          {{ espacio.recursos?.[0]?.nombre ?? '' }}
+        </span>
+        <div
+          *ngIf="(espacio.recursos?.length ?? 0) - 1 > 0"
+          class="has-tooltip south badge bg-primary"
+        >
+          +{{ (espacio.recursos?.length ?? 0) - 1 }}
+          <span
+            class="tooltip"
+            [innerHTML]="getRecursosForTooltip(espacio?.recursos)"
+          ></span>
+        </div>
+      </td>
+      <td>
+        <button
+          class="btn btn-warning btn-sm m-1"
+          (click)="openModalEspacioFisico(espacio)"
+        >
+          Edit
+        </button>
+        <button
+          class="btn btn-danger btn-sm"
+          (click)="removeEspacioFisico(espacio?.id)"
+        >
+          Remove
+        </button>
+      </td>
+    </tr>
+  </tbody>
+
+  <div
+    *ngIf="shouldOpenModalEspacioFisico"
+    class="modal modal-lg"
+    tabindex="-1"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            {{
+              isEditing ? "Editar Espacio Físico" : "Crear Nuevo Espacio Físico"
+            }}
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+            (click)="onCloseModalEspacioFisico()"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="reservaForm">
+            <div class="input-group mb-3">
+              <div class="input-group-text" id="basic-addon1">
+                Nombre: <span [style.color]="'red'"> *</span>
+              </div>
+              <input
+                type="text"
+                id="nombre"
+                formControlName="nombre"
+                class="form-control"
+                placeholder="Ingrese un nombre..."
+              />
+            </div>
+            <div class="input-group mb-3">
+              <div class="input-group-text">
+                Descripción: <span [style.color]="'red'"> *</span>
+              </div>
+              <textarea
+                class="form-control"
+                id="descripcion"
+                formControlName="descripcion"
+                aria-label="Descripcion"
+                placeholder="Ingrese una descripcion..."
+              ></textarea>
+            </div>
+            <div class="input-group">
+              <div class="input-group-text" id="basic-addon1">
+                Capacidad: <span [style.color]="'red'"> *</span>
+              </div>
+              <input
+                type="number"
+                id="capacidad"
+                formControlName="capacidad"
+                class="form-control"
+                placeholder="Ingrese la capacidad..."
+              />
+            </div>
+            <div class="d-flex gap-1">
+              <div class="input-group mb-3 mt-3 w-100 dropdown-container">
+                <div class="dropdown w-100">
+                  <button
+                    class="btn btn-light dropdown-toggle w-100"
+                    type="button"
+                    id="dropdownCheckbox"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="true"
+                  >
+                    Selecciona los recursos:
+                  </button>
+                  <ul
+                    class="dropdown-menu w-100"
+                    aria-labelledby="dropdownCheckbox"
+                  >
+                    <li *ngFor="let recurso of recursos" class="option">
+                      <label class="form-check-label">{{
+                        recurso.nombre
+                      }}</label>
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        [value]="recurso.id"
+                        [checked]="isRecursoSelected(recurso.id)"
+                        (change)="selectRecurso(recurso.id)"
+                      />
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="input-group mb-3 mt-3 w-100 dropdown-container">
+                <div class="dropdown w-100">
+                  <button
+                    class="btn btn-light dropdown-toggle w-100"
+                    type="button"
+                    id="dropdownRadio"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="true"
+                  >
+                    Selecciona el estado:
+                    <span [style.color]="'red'">*</span>
+                  </button>
+                  <ul
+                    class="dropdown-menu w-100"
+                    aria-labelledby="dropdownRadio"
+                  >
+                    <li *ngFor="let estado of estados" class="option">
+                      <label class="form-check-label">{{
+                        estado.nombre
+                      }}</label>
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        [value]="estado.id"
+                        [checked]="isEstadoSelected(estado.id)"
+                        name="estado"
+                        (change)="selectEstado(estado.id)"
+                      />
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+            (click)="onCloseModalEspacioFisico()"
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="addEspacioFisico()"
+          >
+            Save changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</table>

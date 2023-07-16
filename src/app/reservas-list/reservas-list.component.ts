@@ -44,6 +44,7 @@ export class ReservaListComponent implements OnInit, OnDestroy {
       comentario: [''],
       motivoRechazo: [''],
       solicitanteId: [Number, Validators.required],
+      estadoId: [Number],
       espacioFisicoSeleccionado: [Number, Validators.required],
       recursosSeleccionados: [[]],
     });
@@ -124,6 +125,7 @@ export class ReservaListComponent implements OnInit, OnDestroy {
         comentario: reserva.comentario,
         motivoRechazo: reserva.motivoRechazo,
         solicitanteId: reserva.solicitante.id,
+        estadoId: reserva.estado.id,
         espacioFisicoSeleccionado: reserva.espacioFisico.id,
         recursosSeleccionados: reserva.recursosSolicitados,
       });
@@ -138,7 +140,6 @@ export class ReservaListComponent implements OnInit, OnDestroy {
     this.reservasService.getReservas().subscribe((reservas: any) => {
       this.reservasPaginado = reservas;
       this.reservasContent = reservas.content;
-      console.log(reservas.content);
     });
   }
 
@@ -266,6 +267,7 @@ export class ReservaListComponent implements OnInit, OnDestroy {
       const segundos = String(fechaActual.getSeconds()).padStart(2, '0');
 
       const fechaHoraCreacion = `${anio}-${mes}-${dia}T${hora}:${minutos}:${segundos}`;
+      const estado  = this.isEditing ? { id: this.reservaForm.value.estadoId } : { id: 1 };
       // Creacion la nueva reserva
       const nuevaReserva = {
 
@@ -279,7 +281,7 @@ export class ReservaListComponent implements OnInit, OnDestroy {
         solicitante: { id: this.reservaForm.value.solicitanteId },
         espacioFisico: { id: this.reservaForm.value.espacioFisicoSeleccionado },
         recursosSolicitados: this.reservaForm.value.recursosSeleccionados,
-        estado: { id: 1 },
+        estado: estado,
       };
 
       // Aquí puedes llamar a tu servicio o realizar cualquier otra lógica para registrar la reserva

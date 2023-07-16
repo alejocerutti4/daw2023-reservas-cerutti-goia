@@ -13,6 +13,11 @@ interface ReservasListState {
   shouldOpenModalReserva: boolean;
 }
 
+interface EspaciosFisicosListState {
+  espaciosFisicos: any[];
+  shouldOpenModalEspacioFisico: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -27,6 +32,11 @@ export class StateService {
     reservasPaginado: null,
     reservasContent: [],
     shouldOpenModalReserva: false
+  });
+
+  private espaciosFisicosListStateSubject: BehaviorSubject<EspaciosFisicosListState> = new BehaviorSubject<EspaciosFisicosListState>({
+    espaciosFisicos: [],
+    shouldOpenModalEspacioFisico: false
   });
 
   setHeaderState(newState: Partial<HeaderState>): void {
@@ -55,6 +65,20 @@ export class StateService {
 
   getReservasListState(): ReservasListState {
     return this.reservasListStateSubject.getValue();
+  }
+
+  setEspaciosFisicosListState(newState: Partial<EspaciosFisicosListState>): void {
+    const currentState = this.espaciosFisicosListStateSubject.getValue();
+    const updatedState = { ...currentState, ...newState };
+    this.espaciosFisicosListStateSubject.next(updatedState);
+  }
+
+  getEspaciosFisicosListStateSubject(): Observable<EspaciosFisicosListState> {
+    return this.espaciosFisicosListStateSubject.asObservable();
+  }
+
+  getEspaciosFisicosListState(): EspaciosFisicosListState {
+    return this.espaciosFisicosListStateSubject.getValue();
   }
 
 }

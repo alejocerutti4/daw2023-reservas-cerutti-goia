@@ -9,24 +9,24 @@ import { FormsModule } from '@angular/forms';
 import { ReservaListComponent } from './reservas-list/reservas-list.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { ReactiveFormsModule } from '@angular/forms';
-
-
+import { EspaciosFisicosListComponent } from './espacios-fisicos-list/espacios-fisicos-list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     ReservaListComponent,
-    SidebarComponent
-    ],
+    SidebarComponent,
+    EspaciosFisicosListComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

@@ -25,7 +25,7 @@ interface ReservaData {
       id: number
     }
   ];
-  estado: {
+  estado?: {
     id: number;
   };
 }
@@ -76,11 +76,9 @@ export class ReservasService {
   removeReserva(index: number): void {
     this.http.delete(this.apiBaseUrl + 'reservas/' + index).subscribe(() => {
       const currentState = this.stateService.getReservasListState();
-      console.log("current", currentState.reservasContent)
       const newReservasContent = currentState.reservasContent.filter(
         (reserva: any) => reserva.id !== index
       );
-      console.log("new", newReservasContent)
       this.stateService.setReservasListState({
         reservasContent: newReservasContent,
         reservasPaginado: {
@@ -89,7 +87,6 @@ export class ReservasService {
         },
       });
 
-      console.log("afterUpdating", this.stateService.getReservasListState().reservasContent, this.stateService.getReservasListState().reservasPaginado);
     });
   }
 

@@ -1,3 +1,78 @@
 /* bootstrap */
 @import "~bootstrap/dist/css/bootstrap.css";
-body, html {height:100%; margin:0; padding: 0;}
+body,
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.has-tooltip {
+  -webkit-transform: translateZ(0); /* webkit flicker fix */
+  -webkit-font-smoothing: antialiased; /* webkit text rendering fix */
+}
+
+.has-tooltip .tooltip {
+  background: #fff;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  opacity: 0;
+  padding: 1em;
+  position: absolute;
+  visibility: hidden;
+  width: 200px;
+  -webkit-transition: all 0.25s ease-out;
+  -moz-transition: all 0.25s ease-out;
+  -ms-transition: all 0.25s ease-out;
+  -o-transition: all 0.25s ease-out;
+  transition: all 0.25s ease-out;
+  -webkit-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.28);
+  -moz-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.28);
+  -ms-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.28);
+  -o-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.28);
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.28);
+}
+
+/* This bridges the gap so you can mouse into the tooltip without it disappearing */
+.has-tooltip .tooltip:before {
+  content: " ";
+  display: block;
+  height: 1em;
+  position: absolute;
+  width: 100%;
+}
+
+.has-tooltip:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  -webkit-transform: translateX(0px) translateY(0px) !important;
+  -moz-transform: translateX(0px) translateY(0px) !important;
+  -ms-transform: translateX(0px) translateY(0px) !important;
+  -o-transform: translateX(0px) translateY(0px) !important;
+  transform: translateX(0px) translateY(0px) !important;
+}
+
+/* TOOLTIPS 'SOUTH' VERSION */
+.has-tooltip.south .tooltip {
+  top: 100%;
+  bottom: auto;
+  left: -1em;
+  right: auto;
+  margin-left: 0%;
+  margin-right: auto;
+  margin-top: 0.6em;
+  -webkit-transform: translateX(0px) translateY(-10px);
+  -moz-transform: translateX(0px) translateY(-10px);
+  -ms-transform: translateX(0px) translateY(-10px);
+  -o-transform: translateX(0px) translateY(-10px);
+  transform: translateX(0px) translateY(-10px);
+}
+
+.has-tooltip.south .tooltip:before {
+  top: -1em;
+  left: 0;
+  height: 100%;
+  width: 1em;
+}

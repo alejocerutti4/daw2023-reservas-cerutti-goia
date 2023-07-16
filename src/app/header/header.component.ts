@@ -17,7 +17,7 @@ export class HeaderComponent {
     this.suscribeToState();
   }
 
-  openModalReserva() {
+  executeOpenModalFunction() {
     this.openModal();
   }
 
