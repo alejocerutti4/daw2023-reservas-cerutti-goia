@@ -19,6 +19,8 @@ export class ReservaListComponent implements OnInit, OnDestroy {
   recursosSeleccionados: any[] = [];
   maxPersonas: number = 0;
   reservasPaginado: any;
+  pageNumbers: any[] = [];
+  currentPage: number = 0;
   reservasContent: any[] = [];
   shouldOpenModalReserva: boolean = false;
   reservaForm: FormGroup;
@@ -142,10 +144,13 @@ export class ReservaListComponent implements OnInit, OnDestroy {
   }
 
   private getReservaData() {
-    this.reservasService.getReservas().subscribe((reservas: any) => {
+    this.reservasService.getReservas(this.currentPage).subscribe((reservas: any) => {
       this.reservasPaginado = reservas;
       this.reservasContent = reservas.content;
-      console.log(this.reservasContent)
+      for (let i = 0; i < this.reservasPaginado.totalPages; i++) {
+        this.pageNumbers.push({ pageNumber: i, isActive: i == 0 });
+      }
+
     });
   }
 
@@ -334,7 +339,7 @@ export class ReservaListComponent implements OnInit, OnDestroy {
   }
 
   getRecursosForTooltip(recursos: any) {
-    let recursosList = '<span>Recursos Disponibles: </span>';
+    let recursosList = '<span>Recursos Solicitados: </span>';
 
     recursos.forEach((recurso: any) => {
       recursosList += `<span>• ${recurso.nombre}</span>`;
@@ -343,5 +348,30 @@ export class ReservaListComponent implements OnInit, OnDestroy {
     recursosList += '';
 
     return recursosList;
+  }
+
+  changePage(page: any) {
+    this.currentPage = page.pageNumber;
+    this.reservasService.getReservas(this.currentPage).subscribe((reservas: any) => {
+      this.reservasPaginado = reservas;
+      this.reservasContent = reservas.content;
+      this.pageNumbers.forEach((page: any) => {
+        page.isActive = page.pageNumber == this.currentPage;
+      });
+    });
+  }
+
+  changeToNextPage() {
+    if (this.currentPage < this.reservasPaginado.totalPages - 1) {
+      this.currentPage++;
+      this.changePage({ pageNumber: this.currentPage });
+    }
+  }
+
+  changeToBackPage() {
+    if (this.currentPage > 0) {
+      this.currentPage--;
+      this.changePage({ pageNumber: this.currentPage });
+    }
   }
 }

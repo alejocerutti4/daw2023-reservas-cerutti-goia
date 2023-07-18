@@ -10,7 +10,7 @@ html {
 .has-tooltip {
   -webkit-transform: translateZ(0); /* webkit flicker fix */
   -webkit-font-smoothing: antialiased; /* webkit text rendering fix */
-  z-index: 2;
+  z-index: 9999;
 }
 
 .has-tooltip .tooltip {
@@ -24,7 +24,7 @@ html {
   position: absolute;
   visibility: hidden;
   width: 200px;
-  z-index: 100;
+  z-index: 9999;
   -webkit-transition: all 0.25s ease-out;
   -moz-transition: all 0.25s ease-out;
   -ms-transition: all 0.25s ease-out;

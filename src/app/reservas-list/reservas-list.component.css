@@ -31,3 +31,9 @@
   background-color: #ff4136;
   color: #fff;
 }
+
+.pagination {
+  margin-left: auto;
+  margin-right: 1%;
+  z-index: 1;
+}

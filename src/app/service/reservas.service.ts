@@ -39,8 +39,8 @@ export class ReservasService {
 
   constructor(private http: HttpClient, private stateService: StateService) {}
 
-  getReservas(): Observable<any[]> {
-    return this.fetchReservasData().pipe(
+  getReservas(pageNumber: Number): Observable<any[]> {
+    return this.fetchReservasData(pageNumber).pipe(
       map((data: any) => {
         this.stateService.setReservasListState({
           reservasPaginado: data,
@@ -55,8 +55,8 @@ export class ReservasService {
     );
   }
 
-  private fetchReservasData(): Observable<any> {
-    return this.http.get(this.apiBaseUrl + 'reservas/');
+  private fetchReservasData(pageNumber: Number): Observable<any> {
+    return this.http.get(this.apiBaseUrl + `reservas/?page=${pageNumber}&size=5`);
   }
 
   addReserva(reserva: ReservaData): Observable<any> {
@@ -77,7 +77,7 @@ export class ReservasService {
         return throwError(() => error); // Devuelve el error completo incluyendo el cuerpo (body) del error.
       })
     );
-  } 
+  }
 
   removeReserva(index: number): void {
     this.http.delete(this.apiBaseUrl + 'reservas/' + index).subscribe(() => {
@@ -118,4 +118,4 @@ export class ReservasService {
       return throwError(() => error); // Devuelve el error completo incluyendo el cuerpo (body) del error.
     }));
   }
-} 
+}

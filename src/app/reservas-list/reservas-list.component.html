@@ -8,7 +8,7 @@
       <th>Fecha Inicio - Fecha Fin</th>
       <th>Horario</th>
       <th>C. Personas</th>
-      <th>R. Asignados</th>
+      <th>R. Solicitados</th>
       <th>Estado</th>
       <th>Actions</th>
     </tr>
@@ -127,6 +127,18 @@
     </div>
   </div>
 </table>
+<nav aria-label="..." class="pagination">
+  <ul class="pagination">
+    <li class="page-item" [class.disabled]="pageNumbers[0]?.pageNumber === currentPage">
+      <a class="page-link" (click)="changeToBackPage()" tabindex="-1">Previous</a>
+    </li>
+    <li *ngFor="let page of pageNumbers" class="page-item" [class.active]="page?.pageNumber === currentPage">
+      <a class="page-link" (click)="changePage(page)">{{ page?.pageNumber }}</a>
+    <li class="page-item" [class.disabled]="pageNumbers.length -1 === currentPage">
+      <a class="page-link" (click)="changeToNextPage()">Next</a>
+    </li>
+  </ul>
+</nav>
 
 
 
