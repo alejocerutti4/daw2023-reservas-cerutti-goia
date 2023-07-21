@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { StateService } from './state.service';
+import { environment } from '../../environments/environment';
 
 export interface EspacioFisico {
   id?: number;
@@ -16,7 +17,7 @@ export interface EspacioFisico {
   providedIn: 'root'
 })
 export class EspaciosFisicosService {
-  private apiBaseUrl = 'http://localhost:8080/';
+  private apiBaseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient, private stateService: StateService) {}
 

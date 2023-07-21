@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RecursosService {
 
-  private apiBaseUrl = 'http://localhost:8080/';
+  private apiBaseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 

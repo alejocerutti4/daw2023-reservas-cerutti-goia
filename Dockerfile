@@ -1,20 +1,27 @@
-# Use the official Node.js image as the base image
-FROM node:14.17-alpine
+# Etapa de compilación
+FROM node:16.14-alpine as build-stage
 
-# Set the working directory inside the container
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copy package.json and package-lock.json (if available)
 COPY package*.json ./
 
-# Install Node.js dependencies
 RUN npm install
 
-# Copy the rest of the application files
 COPY . .
 
-# Build the Angular app for production
 RUN npm run build --prod
 
-# Set the command to run the Angular app (change "ng serve" to your production command)
-CMD ["npm", "start"]
+# Etapa de producción
+FROM nginx:latest
+
+# Eliminar los archivos existentes en la carpeta html
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copiar los archivos estáticos de la etapa de compilación al directorio de Nginx
+COPY --from=build-stage /app/dist/daw2023-reservas-cerutti-goia /usr/share/nginx/html
+
+# Exponer el puerto 80 para acceder a la aplicación desde el host
+EXPOSE 80
+
+# Iniciar el servidor Nginx en primer plano
+CMD ["nginx", "-g", "daemon off;"]

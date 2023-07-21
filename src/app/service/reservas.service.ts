@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, catchError, map, throwError } from 'rxjs';
 import { StateService } from './state.service';
+import { environment } from 'src/environments/environment';
 
 interface ReservaData {
   fechaHoraCreacionReserva: string;
@@ -35,7 +36,7 @@ interface ReservaData {
   providedIn: 'root',
 })
 export class ReservasService {
-  private apiBaseUrl = 'http://localhost:8080/';
+  private apiBaseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient, private stateService: StateService) {}
 
