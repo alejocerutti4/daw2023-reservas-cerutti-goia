@@ -1,14 +1,18 @@
 # Etapa de compilación
 FROM node:16.14-alpine as build-stage
 
+# Se establece el directorio de trabajo dentro del contenedor 
 WORKDIR /app
 
 COPY package*.json ./
 
+# Instalacion de las dependencias del proyecto Node.js.
 RUN npm install
 
+# Copia todos los archivos y directorios del directorio de construcción local al directorio /app en el contenedor.
 COPY . .
 
+# Se construye el proyecto con la configuracion de produccion
 RUN npm run build --configuration=production
 
 # Etapa de producción
