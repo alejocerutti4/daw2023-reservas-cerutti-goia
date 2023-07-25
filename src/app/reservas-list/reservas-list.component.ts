@@ -318,6 +318,8 @@ export class ReservaListComponent implements OnInit, OnDestroy {
           }
         );
       }
+    }else{
+      alert("Faltan datos");
     }
   }
 

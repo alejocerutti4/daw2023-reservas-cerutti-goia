@@ -16,7 +16,7 @@ export class EspaciosFisicosListComponent implements OnInit {
   estados: any[] = [];
   isEditing: boolean = false;
   shouldOpenModalEspacioFisico: boolean = false;
-  reservaForm: FormGroup;
+  recursoForm: FormGroup;
 
   constructor(
     private stateService: StateService,
@@ -25,7 +25,7 @@ export class EspaciosFisicosListComponent implements OnInit {
     private estadosService: EstadosService,
     private formBuilder: FormBuilder,
   ) {
-    this.reservaForm = this.formBuilder.group({
+    this.recursoForm = this.formBuilder.group({
       id: [null],
       nombre: ['', Validators.required],
       descripcion: [''],
@@ -80,16 +80,18 @@ export class EspaciosFisicosListComponent implements OnInit {
     this.stateService.setEspaciosFisicosListState({
       shouldOpenModalEspacioFisico: true,
     });
+    console.log(this.recursoForm);
+    
     if(espacio) {
       this.isEditing = true;
-      this.reservaForm.get('id')?.setValue(espacio.id);
-      this.reservaForm.get('nombre')?.setValue(espacio.nombre);
-      this.reservaForm.get('descripcion')?.setValue(espacio.descripcion);
-      this.reservaForm.get('capacidad')?.setValue(espacio.capacidad);
-      this.reservaForm.get('recursos')?.setValue(espacio.recursos);
-      this.reservaForm.get('estadoId')?.setValue(espacio.estado.id);
-    } else if (this.reservaForm) {
-      this.reservaForm.reset();
+      this.recursoForm.get('id')?.setValue(espacio.id);
+      this.recursoForm.get('nombre')?.setValue(espacio.nombre);
+      this.recursoForm.get('descripcion')?.setValue(espacio.descripcion);
+      this.recursoForm.get('capacidad')?.setValue(espacio.capacidad);
+      this.recursoForm.get('recursos')?.setValue(espacio.recursos);
+      this.recursoForm.get('estadoId')?.setValue(espacio.estado.id);
+    } else if (this.recursoForm) {
+      this.recursoForm.reset();
       this.isEditing = false;
     }
   }
@@ -111,21 +113,21 @@ export class EspaciosFisicosListComponent implements OnInit {
   }
 
   addEspacioFisico = () => {
-    if (this.reservaForm.valid) {
+    if (this.recursoForm.valid) {
 
       const espacioFisico: EspacioFisico = {
-        nombre: this.reservaForm.get('nombre')?.value,
-        descripcion: this.reservaForm.get('descripcion')?.value,
-        capacidad: this.reservaForm.get('capacidad')?.value,
-        recursos: this.reservaForm.get('recursos')?.value,
+        nombre: this.recursoForm.get('nombre')?.value,
+        descripcion: this.recursoForm.get('descripcion')?.value,
+        capacidad: this.recursoForm.get('capacidad')?.value,
+        recursos: this.recursoForm.get('recursos')?.value,
         estado: {
-          id: this.reservaForm.get('estadoId')?.value
+          id: this.recursoForm.get('estadoId')?.value
         }
       };
       if(!this.isEditing){
         this.espaciosFisicosService.addEspacioFisico(espacioFisico);
       }else{
-        const id = this.reservaForm.get('id')?.value;
+        const id = this.recursoForm.get('id')?.value;
         this.espaciosFisicosService.updateEspacioFisico(espacioFisico, id);
       }
 
@@ -163,11 +165,11 @@ export class EspaciosFisicosListComponent implements OnInit {
   }
 
   selectEstado(estadoId: string){
-    this.reservaForm.get('estadoId')?.setValue(estadoId);
+    this.recursoForm.get('estadoId')?.setValue(estadoId);
   }
 
   selectRecurso(recursoId: string){
-    const recursosControl = this.reservaForm.get('recursos');
+    const recursosControl = this.recursoForm.get('recursos');
     const recursos = recursosControl?.value as any[]; // Obtener el valor actual del array
     const recurso = this.recursos.find((r) => r.id === recursoId);
     recurso.seleccionado = !recurso.seleccionado; // Invertir el estado del recurso seleccionado
@@ -184,12 +186,12 @@ export class EspaciosFisicosListComponent implements OnInit {
   }
 
   isRecursoSelected(recursoId: string) {
-    const recursos = this.reservaForm.get('recursos')?.value as any[];
+    const recursos = this.recursoForm.get('recursos')?.value as any[];
     return recursos.some((r) => r.id === recursoId);
   }
 
   isEstadoSelected(estadoId: string) {
-    const estado = this.reservaForm.get('estadoId')?.value;
+    const estado = this.recursoForm.get('estadoId')?.value;
     return estado === estadoId;
   }
 }
