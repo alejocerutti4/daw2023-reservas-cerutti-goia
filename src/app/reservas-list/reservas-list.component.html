@@ -60,7 +60,10 @@
         <div class="modal-body">
           <form [formGroup]="reservaForm">
             <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon1">Solicitante:</span>
+              <span class="input-group-text" id="basic-addon1">
+                Solicitante:
+                <span [style.color]="'red'">*</span>
+              </span>
               <select class="form-select form-select-lg" aria-label=".form-select-lg" formControlName="solicitanteId">
                 <option *ngFor="let solicitante of solicitantes" [value]="solicitante.id">
                   {{ solicitante.nombre }} {{ solicitante.apellido }}
@@ -68,7 +71,10 @@
               </select>
             </div>
             <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon1">Espacio físico:</span>
+              <span class="input-group-text" id="basic-addon1">
+                Espacio físico:
+                <span [style.color]="'red'">*</span>
+              </span>
               <select class="form-select form-select-lg" aria-label=".form-select-lg" formControlName="espacioFisicoSeleccionado">
                 <option *ngFor="let espacio of espaciosFisicos" [value]="espacio.id" [disabled]="espacio.estado.id === 8">
                   {{ espacio.estado.id === 8 ? espacio.nombre + ' - (Inhabilitado)' : espacio.nombre }}
@@ -92,15 +98,27 @@
               </table>
             </div>
               <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon1">Fecha de reserva:</span>
+                <span class="input-group-text" id="basic-addon1">
+                  Fecha de reserva:
+                  <span [style.color]="'red'">*</span>
+                </span>
                 <input type="date" id="fechaInicio" formControlName="fechaInicio" class="form-control" placeholder="dd/mm/aaaa">
-                <span class="input-group-text" id="basic-addon1">Hora de inicio:</span>
+                <span class="input-group-text" id="basic-addon1">
+                  Hora de inicio:
+                  <span [style.color]="'red'">*</span>
+                </span>
                 <input type="time" id="horaInicio" formControlName="horaInicio" class="form-control">
               </div>
               <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon1">Fecha fin de reserva:</span>
+                <span class="input-group-text" id="basic-addon1">
+                  Fecha fin de reserva:
+                  <span [style.color]="'red'">*</span>
+                </span>
                 <input type="date" id="fechaFin" formControlName="fechaFin" class="form-control" placeholder="dd/mm/aaaa">
-                <span class="input-group-text" id="basic-addon1">Hora fin de reserva:</span>
+                <span class="input-group-text" id="basic-addon1">
+                  Hora fin de reserva:
+                  <span [style.color]="'red'">*</span>
+                </span>
                 <input type="time" id="horaFin" formControlName="horaFin" class="form-control">
               </div>
             <div class="input-group mb-3">
@@ -108,7 +126,10 @@
               <input type="text" id="motivoReserva" formControlName="motivoReserva" class="form-control">
             </div>
             <div class="input-group">
-              <span class="input-group-text" id="basic-addon1">Cantidad de personas:</span>
+              <span class="input-group-text" id="basic-addon1">
+                Cantidad de personas:
+                <span [style.color]="'red'">*</span>
+              </span>
               <input type="number" id="cantidadPersonas" formControlName="cantidadPersonas" class="form-control">
             </div>
             <small class="text-muted">Máximo para el espacio fisico seleccionado: {{ maxPersonas }} personas.</small>
