@@ -1,9 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { StateService } from '../service/state.service';
-import { EspacioFisico, EspaciosFisicosService } from '../service/espacios-fisicos.service';
+import { EspaciosFisicosService } from '../service/espacios-fisicos.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RecursosService } from '../service/recursos.service';
 import { EstadosService } from '../service/estados.service';
+import { EspacioFisico, EspacioFisicoPost, Estado, Recurso } from '../types';
+
+export interface RecursoForm {
+  id: string;
+  seleccionado: boolean;
+  nombre: string;
+}
+
+export interface EstadoForm {
+  id: string;
+  nombre: string;
+}
 
 @Component({
   selector: 'app-espacios-fisicos-list',
@@ -12,24 +24,24 @@ import { EstadosService } from '../service/estados.service';
 })
 export class EspaciosFisicosListComponent implements OnInit {
   espaciosFisicos: EspacioFisico[] = [];
-  recursos: any[] = [];
-  estados: any[] = [];
+  recursos: RecursoForm[] = [];
+  estados: EstadoForm[] = [];
   isEditing: boolean = false;
   shouldOpenModalEspacioFisico: boolean = false;
-  recursoForm: FormGroup;
+  espacioFisicoForm: FormGroup;
 
   constructor(
     private stateService: StateService,
     private espaciosFisicosService: EspaciosFisicosService,
     private recursosService: RecursosService,
     private estadosService: EstadosService,
-    private formBuilder: FormBuilder,
+    private formBuilder: FormBuilder
   ) {
-    this.recursoForm = this.formBuilder.group({
+    this.espacioFisicoForm = this.formBuilder.group({
       id: [null],
       nombre: ['', Validators.required],
       descripcion: [''],
-      capacidad:  [null, [Validators.required, Validators.min(1)]],
+      capacidad: [null, [Validators.required, Validators.min(1)]],
       recursos: [[]],
       estadoId: [null, Validators.required],
     });
@@ -47,7 +59,7 @@ export class EspaciosFisicosListComponent implements OnInit {
     this.stateService.setHeaderState({
       title: 'Espacios Fisicos',
       buttonContent: 'Nuevo Espacio Fisico',
-      openModal: this.openModalEspacioFisico,
+      openModal: () => this.openModalEspacioFisico(),
     });
   }
 
@@ -56,15 +68,26 @@ export class EspaciosFisicosListComponent implements OnInit {
     this.getEstados();
   }
 
+  // Assuming the required imports and class definitions are already present
+
   getRecursos(): void {
-    this.recursosService.getRecursos().subscribe((data: any) => {
-      this.recursos = data.content;
-    });
+    this.recursosService.getRecursos().subscribe(
+      (data: any) => {
+        console.log(data)
+        this.recursos = data.content;
+      },
+      (error: any) => {
+        // Handle the error appropriately, e.g., show an error message or log the error.
+        console.error('Error fetching resources:', error);
+      }
+    );
   }
 
   getEstados(): void {
     this.estadosService.getEstados().subscribe((data: any) => {
-      this.estados = data.content.filter((estado: any) => estado.ambito.id === 2);
+      this.estados = data.content.filter(
+        (estado: Estado) => estado.ambito.id === 2
+      );
     });
   }
 
@@ -76,30 +99,32 @@ export class EspaciosFisicosListComponent implements OnInit {
       });
   }
 
-  openModalEspacioFisico(espacio?: any) {
+  openModalEspacioFisico(espacio?: EspacioFisico) {
     this.stateService.setEspaciosFisicosListState({
       shouldOpenModalEspacioFisico: true,
     });
-    console.log(this.recursoForm);
-    
-    if(espacio) {
+
+    if (espacio) {
       this.isEditing = true;
-      this.recursoForm.get('id')?.setValue(espacio.id);
-      this.recursoForm.get('nombre')?.setValue(espacio.nombre);
-      this.recursoForm.get('descripcion')?.setValue(espacio.descripcion);
-      this.recursoForm.get('capacidad')?.setValue(espacio.capacidad);
-      this.recursoForm.get('recursos')?.setValue(espacio.recursos);
-      this.recursoForm.get('estadoId')?.setValue(espacio.estado.id);
-    } else if (this.recursoForm) {
-      this.recursoForm.reset();
-      this.isEditing = false;
+      this.espacioFisicoForm.get('id')?.setValue(espacio.id);
+      this.espacioFisicoForm.get('nombre')?.setValue(espacio.nombre);
+      this.espacioFisicoForm.get('descripcion')?.setValue(espacio.descripcion);
+      this.espacioFisicoForm.get('capacidad')?.setValue(espacio.capacidad);
+      this.espacioFisicoForm.get('recursos')?.setValue(espacio.recursos);
+      this.espacioFisicoForm.get('estadoId')?.setValue(espacio.estado.id);
+    } else {
+      if (this.espacioFisicoForm) {
+        this.espacioFisicoForm.reset();
+        this.isEditing = false;
+        this.getDependencies()
+      }
     }
   }
 
   getEspaciosFisicos(): void {
     this.espaciosFisicosService.getEspaciosFisicos().subscribe((data: any) => {
       const espaciosFisicosFiltered = data.filter(
-        (espacioFisico: any) => espacioFisico.nombre !== ''
+        (espacioFisico: EspacioFisico) => espacioFisico.nombre !== ''
       );
       this.espaciosFisicos = espaciosFisicosFiltered;
     });
@@ -113,27 +138,32 @@ export class EspaciosFisicosListComponent implements OnInit {
   }
 
   addEspacioFisico = () => {
-    if (this.recursoForm.valid) {
-
-      const espacioFisico: EspacioFisico = {
-        nombre: this.recursoForm.get('nombre')?.value,
-        descripcion: this.recursoForm.get('descripcion')?.value,
-        capacidad: this.recursoForm.get('capacidad')?.value,
-        recursos: this.recursoForm.get('recursos')?.value,
+    if (this.espacioFisicoForm.valid) {
+      console.log(this.espacioFisicoForm.get('recursos')?.value);
+      const espacioFisico: EspacioFisicoPost = {
+        nombre: this.espacioFisicoForm.get('nombre')?.value,
+        descripcion: this.espacioFisicoForm.get('descripcion')?.value,
+        capacidad: this.espacioFisicoForm.get('capacidad')?.value,
+        recursos: this.espacioFisicoForm
+          .get('recursos')
+          ?.value?.filter(
+            (recurso: RecursoForm) => recurso.seleccionado !== false
+          ),
         estado: {
-          id: this.recursoForm.get('estadoId')?.value
-        }
+          id: this.espacioFisicoForm.get('estadoId')?.value,
+        },
       };
-      if(!this.isEditing){
+      if (!this.isEditing) {
         this.espaciosFisicosService.addEspacioFisico(espacioFisico);
-      }else{
-        const id = this.recursoForm.get('id')?.value;
+      } else {
+        const id = this.espacioFisicoForm.get('id')?.value;
         this.espaciosFisicosService.updateEspacioFisico(espacioFisico, id);
       }
-
+      this.espacioFisicoForm.get('recursos')?.setValue([]);
+      this.espacioFisicoForm.reset();
       this.onCloseModalEspacioFisico();
-    }else{
-      alert("Faltan datos");
+    } else {
+      alert('Faltan datos');
     }
   };
 
@@ -141,57 +171,81 @@ export class EspaciosFisicosListComponent implements OnInit {
     this.stateService.setEspaciosFisicosListState({
       shouldOpenModalEspacioFisico: false,
     });
+    this.espacioFisicoForm.reset();
   }
 
   subscribeToEspaciosFisicosListState(): void {
     this.stateService.getEspaciosFisicosListStateSubject().subscribe((data) => {
       const espaciosFisicosFiltered = data.espaciosFisicos.filter(
-        (espacioFisico: any) => espacioFisico.nombre !== ''
+        (espacioFisico: EspacioFisico) => espacioFisico.nombre !== ''
       );
       this.espaciosFisicos = espaciosFisicosFiltered;
     });
   }
 
-  getRecursosForTooltip(recursos: any) {
-    let recursosList = '<span>Recursos Disponibles: </span>';
-
-    recursos.forEach((recurso: any) => {
-      recursosList += `<span>• ${recurso.nombre}</span>`;
-    });
-
-    recursosList += '';
-
-    return recursosList;
-  }
-
-  selectEstado(estadoId: string){
-    this.recursoForm.get('estadoId')?.setValue(estadoId);
-  }
-
-  selectRecurso(recursoId: string){
-    const recursosControl = this.recursoForm.get('recursos');
-    const recursos = recursosControl?.value as any[]; // Obtener el valor actual del array
-    const recurso = this.recursos.find((r) => r.id === recursoId);
-    recurso.seleccionado = !recurso.seleccionado; // Invertir el estado del recurso seleccionado
-
-    if (recurso.seleccionado) {
-      recursos.push(recurso); // Agregar el nuevo recurso al array
+  getRecursosForTooltip(recursos: Recurso[] | undefined) {
+    if (recursos === undefined) {
+      return '';
     } else {
-      // Eliminar el recurso del arreglo de recursos seleccionados
-      const nuevosRecursos = recursos.filter(
-        (r) => r !== recurso
-      );
-      recursosControl?.setValue(nuevosRecursos);
+      let recursosList = '<span>Recursos Disponibles: </span>';
+
+      recursos.forEach((recurso: Recurso) => {
+        recursosList += `<span>• ${recurso.nombre}</span>`;
+      });
+
+      recursosList += '';
+
+      return recursosList;
+    }
+  }
+
+  selectEstado(estadoId: string) {
+    this.espacioFisicoForm.get('estadoId')?.setValue(estadoId);
+  }
+
+  selectRecurso(recursoId: string) {
+    const recursosControl = this.espacioFisicoForm.get('recursos')!;
+    const recursos = (recursosControl.value as RecursoForm[]) || [];
+
+    const recurso = this.recursos.find((r) => r.id === recursoId);
+
+    if (recurso) {
+      if (recurso.seleccionado !== undefined) {
+        recurso.seleccionado = !recurso.seleccionado;
+      } else {
+        recurso.seleccionado = true;
+      }
+
+      if (recurso.seleccionado) {
+        // Add the resource to the recursos array if it's not already present
+        if (!recursos.some((r) => r.id === recursoId)) {
+          recursos.push({ ...recurso });
+        }
+      } else {
+        // Deselect: Remove the resource from the recursos array
+        recursosControl.setValue(recursos.filter((r) => r.id !== recursoId));
+        return;
+      }
+
+      recursosControl.setValue(recursos);
     }
   }
 
   isRecursoSelected(recursoId: string) {
-    const recursos = this.recursoForm.get('recursos')?.value as any[];
-    return recursos.some((r) => r.id === recursoId);
+    const recursos = this.espacioFisicoForm.get('recursos')
+      ?.value as RecursoForm[];
+      console.log("seleccionadorec", recursos)
+    if (recursos) {
+      const seleccionado =  recursos.find((r) => r.id === recursoId)?.seleccionado
+      console.log("seleccionado", seleccionado)
+      return (seleccionado !== undefined && seleccionado !== null) ? seleccionado : false;
+    } else {
+      return false;
+    }
   }
 
   isEstadoSelected(estadoId: string) {
-    const estado = this.recursoForm.get('estadoId')?.value;
+    const estado = this.espacioFisicoForm.get('estadoId')?.value;
     return estado === estadoId;
   }
 }

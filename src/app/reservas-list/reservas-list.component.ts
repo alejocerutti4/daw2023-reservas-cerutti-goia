@@ -6,6 +6,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EspaciosFisicosService } from '../service/espacios-fisicos.service';
 import { SolicitantesService } from '../service/solicitantes.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Reserva, ReservaAPI } from '../types';
 
 @Component({
   selector: 'app-reservas-list',
@@ -25,7 +26,7 @@ export class ReservaListComponent implements OnInit, OnDestroy {
   shouldOpenModalReserva: boolean = false;
   reservaForm: FormGroup;
   isEditing: boolean = false;
-  errorMessage : string = "";
+  errorMessage: string = '';
   private reservasListSuscriber: Subscription = new Subscription();
 
   constructor(
@@ -72,7 +73,7 @@ export class ReservaListComponent implements OnInit, OnDestroy {
     this.stateService.setHeaderState({
       title: 'Listado de reservas',
       buttonContent: 'Nueva Reserva',
-      openModal: this.openModalReserva,
+      openModal: () => this.openModalReserva(),
     });
     this.stateService.setReservasListState({
       shouldOpenModalReserva: false,
@@ -90,11 +91,11 @@ export class ReservaListComponent implements OnInit, OnDestroy {
 
   suscribeToState() {
     this.stateService.getReservasListStateSubject().subscribe((state: any) => {
-      if(this.shouldOpenModalReserva != state.shouldOpenModalReserva) {
+      if (this.shouldOpenModalReserva != state.shouldOpenModalReserva) {
         this.shouldOpenModalReserva = state.shouldOpenModalReserva;
         if (this.shouldOpenModalReserva) {
           this.isEditing = false;
-          this.openModalReserva(null);
+          this.openModalReserva();
         }
       }
     });
@@ -108,10 +109,10 @@ export class ReservaListComponent implements OnInit, OnDestroy {
     this.stateService.setReservasListState({
       shouldOpenModalReserva: false,
     });
-    this.errorMessage="";
+    this.errorMessage = '';
   }
 
-  openModalReserva(reserva: any) {
+  openModalReserva(reserva?: Reserva) {
     this.stateService.setReservasListState({
       shouldOpenModalReserva: true,
     });
@@ -137,21 +138,22 @@ export class ReservaListComponent implements OnInit, OnDestroy {
       this.isEditing = true;
       this.actualizarDatos(reserva.espacioFisico.id);
     } else {
-      if (this.reservaForm){
+      if (this.reservaForm) {
         this.reservaForm.reset();
       }
     }
   }
 
   private getReservaData() {
-    this.reservasService.getReservas(this.currentPage).subscribe((reservas: any) => {
-      this.reservasPaginado = reservas;
-      this.reservasContent = reservas.content;
-      for (let i = 0; i < this.reservasPaginado.totalPages; i++) {
-        this.pageNumbers.push({ pageNumber: i, isActive: i == 0 });
-      }
-
-    });
+    this.reservasService
+      .getReservas(this.currentPage)
+      .subscribe((reservas: ReservaAPI) => { // Update the parameter type here
+        this.reservasPaginado = reservas;
+        this.reservasContent = reservas.content;
+        for (let i = 0; i < this.reservasPaginado.totalPages; i++) {
+          this.pageNumbers.push({ pageNumber: i, isActive: i == 0 });
+        }
+      });
   }
 
   private getEspaciosFisicos() {
@@ -185,7 +187,7 @@ export class ReservaListComponent implements OnInit, OnDestroy {
         // actualizacion de los recursos
         this.actualizarDatos(espacioFisicoId);
         this.cleanSelectedResources();
-        this.errorMessage = "";
+        this.errorMessage = '';
       });
     }
   }
@@ -206,13 +208,14 @@ export class ReservaListComponent implements OnInit, OnDestroy {
       );
 
       this.maxPersonas = espacioFisicoSeleccionado.capacidad;
-    } else if (espacioFisicoSeleccionado && this.isEditing ) {
+    } else if (espacioFisicoSeleccionado && this.isEditing) {
       // now we have recursosSeleccionados from reserva, so we need to check them
       this.recursosEspacioFisico = espacioFisicoSeleccionado.recursos.map(
         (recurso: any) => {
-          const recursoSeleccionado = this.reservaForm.value.recursosSeleccionados.find(
-            (r: any) => r.id == recurso.id
-          );
+          const recursoSeleccionado =
+            this.reservaForm.value.recursosSeleccionados.find(
+              (r: any) => r.id == recurso.id
+            );
           if (recursoSeleccionado) {
             return {
               ...recurso,
@@ -231,24 +234,28 @@ export class ReservaListComponent implements OnInit, OnDestroy {
     }
   }
 
+
+
   onRecursoSeleccionado(recurso: any) {
     recurso.seleccionado = !recurso.seleccionado; // Invertir el estado del recurso seleccionado
 
-    const recursosSeleccionadosControl = this.reservaForm.get(
-      'recursosSeleccionados'
-    );
-    const recursosSeleccionados = recursosSeleccionadosControl?.value as any[]; // Obtener el valor actual del array
+    const recursosSeleccionadosControl = this.reservaForm.get('recursosSeleccionados');
+    const recursosSeleccionados = recursosSeleccionadosControl?.value as any[] || []; // Obtener el valor actual del array
 
     if (recurso.seleccionado) {
-      recursosSeleccionados.push(recurso); // Agregar el nuevo recurso al array
+      // Agregar el nuevo recurso al array si no está ya presente
+      if (!recursosSeleccionados.some((r) => r.id === recurso.id)) {
+        recursosSeleccionados.push(recurso);
+      }
     } else {
       // Eliminar el recurso del arreglo de recursos seleccionados
-      const nuevosRecursosSeleccionados = recursosSeleccionados.filter(
-        (r) => r !== recurso
-      );
-      recursosSeleccionadosControl?.setValue(nuevosRecursosSeleccionados);
+      recursosSeleccionadosControl?.setValue(recursosSeleccionados.filter((r) => r.id !== recurso.id));
+      return;
     }
+
+    recursosSeleccionadosControl?.setValue(recursosSeleccionados);
   }
+
 
   cleanSelectedResources() {
     const recursosSeleccionadosControl = this.reservaForm.get(
@@ -279,10 +286,12 @@ export class ReservaListComponent implements OnInit, OnDestroy {
       const segundos = String(fechaActual.getSeconds()).padStart(2, '0');
 
       const fechaHoraCreacion = `${anio}-${mes}-${dia}T${hora}:${minutos}:${segundos}`;
-      const estado  = this.isEditing ? { id: this.reservaForm.value.estadoId } : { id: 1 };
+      const estado = this.isEditing
+        ? { id: this.reservaForm.value.estadoId }
+        : { id: 1 };
       // Creacion la nueva reserva
+      console.log(this.reservaForm.value.recursosSeleccionados)
       const nuevaReserva = {
-
         fechaHoraCreacionReserva: fechaHoraCreacion,
         fechaHoraInicioReserva: fechaHoraInicio,
         fechaHoraFinReserva: fechaHoraFin,
@@ -308,31 +317,34 @@ export class ReservaListComponent implements OnInit, OnDestroy {
           }
         );
       } else {
-        this.reservasService.updateReserva(nuevaReserva, this.reservaForm.value.id).subscribe(
-          (response: any) => {
-            this.onClose();
-            this.reservaForm.reset();
-          },
-          (error: HttpErrorResponse) => {
-            this.setErrorMessage(error);
-          }
-        );
+        this.reservasService
+          .updateReserva(nuevaReserva, this.reservaForm.value.id)
+          .subscribe(
+            (response: any) => {
+              this.onClose();
+              this.reservaForm.reset();
+            },
+            (error: HttpErrorResponse) => {
+              this.setErrorMessage(error);
+            }
+          );
       }
-    }else{
-      alert("Faltan datos");
+    } else {
+      alert('Faltan datos');
     }
   }
 
-  private setErrorMessage(error: any){
+  private setErrorMessage(error: any) {
     // Capturar el error y mostrar el mensaje adecuado según el código de error
     if (error.status === 400) {
       this.errorMessage = 'Error: Solicitud inválida.';
     } else if (error.status === 404) {
       this.errorMessage = 'Error: Recurso no encontrado.';
     } else if (error.error.errorCode === 50) {
-      this.errorMessage = "Espacio Fisico no disponible.";
+      this.errorMessage = 'Espacio Fisico no disponible.';
     } else if (error.error.errorCode === 51) {
-      this.errorMessage = "Hay superposicion horaria con una reserva ya existente. Elegir otro lugar u otro horario";
+      this.errorMessage =
+        'Hay superposicion horaria con una reserva ya existente. Elegir otro lugar u otro horario';
     } else if (error.status === 500) {
       this.errorMessage = 'Error: Error interno del servidor.';
     } else {
@@ -354,13 +366,15 @@ export class ReservaListComponent implements OnInit, OnDestroy {
 
   changePage(page: any) {
     this.currentPage = page.pageNumber;
-    this.reservasService.getReservas(this.currentPage).subscribe((reservas: any) => {
-      this.reservasPaginado = reservas;
-      this.reservasContent = reservas.content;
-      this.pageNumbers.forEach((page: any) => {
-        page.isActive = page.pageNumber == this.currentPage;
+    this.reservasService
+      .getReservas(this.currentPage)
+      .subscribe((reservas: any) => {
+        this.reservasPaginado = reservas;
+        this.reservasContent = reservas.content;
+        this.pageNumbers.forEach((page: any) => {
+          page.isActive = page.pageNumber == this.currentPage;
+        });
       });
-    });
   }
 
   changeToNextPage() {

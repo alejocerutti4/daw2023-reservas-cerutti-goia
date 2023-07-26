@@ -3,15 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { StateService } from './state.service';
 import { environment } from '../../environments/environment';
-
-export interface EspacioFisico {
-  id?: number;
-  nombre: string;
-  descripcion: string;
-  capacidad: number;
-  recursos: any[]
-  estado: any;
-}
+import { EspacioFisico, EspacioFisicoPost } from '../types';
 
 @Injectable({
   providedIn: 'root'
@@ -44,7 +36,7 @@ export class EspaciosFisicosService {
     })
   }
 
-  addEspacioFisico(espacioFisico: EspacioFisico): void {
+  addEspacioFisico(espacioFisico: EspacioFisicoPost): void {
     this.http.post<any>(this.apiBaseUrl+"espaciosFisicos/", espacioFisico).subscribe((espacioFisico: any) => {
       const currentState = this.stateService.getEspaciosFisicosListState();
       const newEspaciosFisicosContent = [...currentState.espaciosFisicos, espacioFisico];
@@ -54,7 +46,8 @@ export class EspaciosFisicosService {
     });
   }
 
-  updateEspacioFisico(espacioFisico: EspacioFisico, idEspacioFisico: Number): void {
+  updateEspacioFisico(espacioFisico: EspacioFisicoPost, idEspacioFisico: Number): void {
+    console.log(espacioFisico)
     this.http.put<any>(this.apiBaseUrl+"espaciosFisicos/"+idEspacioFisico, espacioFisico).subscribe((espacioFisicoResponse: any) => {
       const currentState = this.stateService.getEspaciosFisicosListState();
       const newEspaciosFisicosContent = currentState.espaciosFisicos.map((espacioFisico: any) => {

@@ -73,7 +73,7 @@
           ></button>
         </div>
         <div class="modal-body">
-          <form [formGroup]="recursoForm">
+          <form [formGroup]="espacioFisicoForm">
             <div class="input-group mb-3">
               <div class="input-group-text" id="basic-addon1">
                 Nombre: <span [style.color]="'red'"> *</span>
@@ -134,8 +134,8 @@
                         class="form-check-input"
                         type="checkbox"
                         [value]="recurso.id"
-                        [checked]="isRecursoSelected(recurso.id)"
                         (change)="selectRecurso(recurso.id)"
+                        [checked]="isRecursoSelected(recurso.id)"
                       />
                     </li>
                   </ul>
