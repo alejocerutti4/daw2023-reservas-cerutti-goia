@@ -72,11 +72,11 @@ export class EspaciosFisicosListComponent implements OnInit {
 
   getRecursos(): void {
     this.recursosService.getRecursos().subscribe(
-      (data: any) => {
-        console.log(data)
-        this.recursos = data.content;
+      (response) => {
+        console.log(response)
+        this.recursos = response;
       },
-      (error: any) => {
+      (error) => {
         // Handle the error appropriately, e.g., show an error message or log the error.
         console.error('Error fetching resources:', error);
       }
