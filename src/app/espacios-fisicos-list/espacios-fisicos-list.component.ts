@@ -73,7 +73,6 @@ export class EspaciosFisicosListComponent implements OnInit {
   getRecursos(): void {
     this.recursosService.getRecursos().subscribe(
       (response) => {
-        console.log(response)
         this.recursos = response;
       },
       (error) => {
@@ -110,7 +109,7 @@ export class EspaciosFisicosListComponent implements OnInit {
       this.espacioFisicoForm.get('nombre')?.setValue(espacio.nombre);
       this.espacioFisicoForm.get('descripcion')?.setValue(espacio.descripcion);
       this.espacioFisicoForm.get('capacidad')?.setValue(espacio.capacidad);
-      this.espacioFisicoForm.get('recursos')?.setValue(espacio.recursos);
+      this.espacioFisicoForm.get('recursos')?.setValue(espacio.recursos.map((recurso: any) => ({ ...recurso, seleccionado: true })));
       this.espacioFisicoForm.get('estadoId')?.setValue(espacio.estado.id);
     } else {
       if (this.espacioFisicoForm) {
@@ -127,6 +126,7 @@ export class EspaciosFisicosListComponent implements OnInit {
         (espacioFisico: EspacioFisico) => espacioFisico.nombre !== ''
       );
       this.espaciosFisicos = espaciosFisicosFiltered;
+
     });
   }
 
@@ -234,10 +234,8 @@ export class EspaciosFisicosListComponent implements OnInit {
   isRecursoSelected(recursoId: string) {
     const recursos = this.espacioFisicoForm.get('recursos')
       ?.value as RecursoForm[];
-      console.log("seleccionadorec", recursos)
     if (recursos) {
       const seleccionado =  recursos.find((r) => r.id === recursoId)?.seleccionado
-      console.log("seleccionado", seleccionado)
       return (seleccionado !== undefined && seleccionado !== null) ? seleccionado : false;
     } else {
       return false;
